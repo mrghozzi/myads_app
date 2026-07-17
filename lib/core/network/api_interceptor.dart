@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../routes/app_router.dart';
 import '../services/secure_storage_service.dart';
 
 class ApiInterceptor extends Interceptor {

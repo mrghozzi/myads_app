@@ -2,6 +2,16 @@
 
 ---
 
+## v1.4.3
+> **Stability & UI Rendering Fixes** — Provider migrations and User data hydration.
+
+### Critical Fixes
+* **Riverpod 3 Migration**: Migrated state management providers from `StateNotifier` to `AsyncNotifier` / `Notifier` to ensure compatibility with Riverpod 3.0+ and resolve compilation errors.
+* **Community Feed User Hydration**: Fixed a backend serialization issue where the API failed to load the post creator's data (`user`) for community feed responses, which caused the Mobile App to display "unknown" for all names and default avatars. The app now correctly displays the user's name, username, verified badge, and custom hexagon avatar.
+* **Firebase Initialization Guard**: Wrapped `Firebase.initializeApp()` in a `try-catch` block within `main.dart` to prevent the app from hard-crashing on startup when Firebase configuration is missing.
+
+---
+
 ## v1.4.2
 > **Authentication Stability Update** — Bypassed Android Keystore bugs and Shared Hosting header stripping.
 

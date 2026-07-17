@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/utils/safe_url_launcher.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:myads_app/l10n/app_localizations.dart';
 import '../../../core/providers/locale_provider.dart';
 import '../../profile/profile_provider.dart';
 
 class SettingsHubScreen extends ConsumerWidget {
   const SettingsHubScreen({super.key});
-
-  Future<void> _launchUrl(String url) async {
-    await SafeUrlLauncher.launch(url);
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -80,10 +74,11 @@ class SettingsHubScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 24),
 
-            // Account Group
-            _buildSectionTitle('Account', isDark),
-            _buildListTile(context, Icons.person, l10n.editProfile, '/settings/profile', isDark),
-            _buildListTile(context, Icons.lock, l10n.privacy, '/settings/privacy', isDark),
+            // General Group
+            _buildSectionTitle('General', isDark),
+            _buildListTile(context, Icons.person_outline, l10n.editProfile, '/settings/profile', isDark),
+            _buildListTile(context, Icons.credit_card, 'Billing & Subscriptions', '/billing', isDark),
+            _buildListTile(context, Icons.lock_outline, l10n.privacySettings, '/settings/privacy', isDark),
             _buildListTile(context, Icons.share, l10n.socialLinks, '/settings/social', isDark),
             _buildListTile(context, Icons.desktop_windows, l10n.sessions, '/settings/sessions', isDark),
             _buildListTile(context, Icons.key, l10n.authorizedApps, '/settings/apps', isDark),
@@ -115,6 +110,7 @@ class SettingsHubScreen extends ConsumerWidget {
 
             // Gamification Group
             _buildSectionTitle('Gamification', isDark),
+            _buildListTile(context, Icons.star_border, 'Quests & Rewards', '/quests', isDark),
             _buildListTile(context, Icons.emoji_events, l10n.badges, '/settings/badges', isDark),
             _buildListTile(context, Icons.history, l10n.pointsHistory, '/settings/history', isDark),
 
@@ -125,19 +121,17 @@ class SettingsHubScreen extends ConsumerWidget {
             ListTile(
               leading: const Icon(Icons.credit_card, color: Color(0xFF615dfa)),
               title: const Text('Billing & Subscriptions'),
-              trailing: const Icon(Icons.open_in_new, size: 16),
+              trailing: const Icon(Icons.chevron_right),
               onTap: () {
-                final baseUrl = dotenv.env['BASE_URL']?.replaceAll(RegExp(r'/api$'), '') ?? 'https://myads.example.com';
-                _launchUrl('$baseUrl/settings/billing');
+                context.push('/billing');
               },
             ),
             ListTile(
               leading: const Icon(Icons.monetization_on, color: Color(0xFF615dfa)),
-              title: const Text('Monetization / Ads'),
-              trailing: const Icon(Icons.open_in_new, size: 16),
+              title: const Text('Monetization / Ads Stats'),
+              trailing: const Icon(Icons.chevron_right),
               onTap: () {
-                final baseUrl = dotenv.env['BASE_URL']?.replaceAll(RegExp(r'/api$'), '') ?? 'https://myads.example.com';
-                _launchUrl('$baseUrl/ads');
+                context.push('/settings/ads-analytics');
               },
             ),
           ],

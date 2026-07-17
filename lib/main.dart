@@ -10,9 +10,20 @@ import 'core/routes/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/providers/locale_provider.dart';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'core/services/push_notification_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+  try {
+    await Firebase.initializeApp();
+    await PushNotificationService().init();
+  } catch (e) {
+    if (kDebugMode) {
+      debugPrint('Firebase initialization error (Missing google-services.json?): $e');
+    }
+  }
   
   runApp(
     const ProviderScope(

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/login_screen.dart';
 import '../../features/home/home_screen.dart';
@@ -21,6 +21,16 @@ import '../../features/settings/screens/sub_screens/apps_settings_screen.dart';
 import '../../features/settings/screens/sub_screens/notifications_settings_screen.dart';
 import '../../features/settings/screens/sub_screens/badges_settings_screen.dart';
 import '../../features/settings/screens/sub_screens/history_settings_screen.dart';
+import '../../features/settings/screens/sub_screens/ads_analytics_screen.dart';
+import '../../features/forums/forums_screen.dart';
+import '../../features/forums/forum_topics_screen.dart';
+import '../../features/forums/forum_topic_detail_screen.dart';
+import '../../features/store/store_products_screen.dart';
+import '../../features/store/store_product_detail_screen.dart';
+import '../../features/orders/orders_list_screen.dart';
+import '../../features/orders/order_detail_screen.dart';
+import '../../features/gamification/gamification_screen.dart';
+import '../../features/billing/billing_screen.dart';
 import '../models/status_model.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -118,6 +128,11 @@ final appRouter = GoRouter(
       builder: (context, state) => const HistorySettingsScreen(),
     ),
     GoRoute(
+      path: '/settings/ads-analytics',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const AdsAnalyticsScreen(),
+    ),
+    GoRoute(
       path: '/messages/:username',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) {
@@ -152,6 +167,64 @@ final appRouter = GoRouter(
           initialFilePaths: extra?['filePaths'] as List<String>?,
         );
       },
+    ),
+    GoRoute(
+      path: '/forums',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const ForumsScreen(),
+    ),
+    GoRoute(
+      path: '/forums/categories/:id',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final id = int.parse(state.pathParameters['id']!);
+        final name = state.extra as String? ?? 'Topics';
+        return ForumTopicsScreen(categoryId: id, categoryName: name);
+      },
+    ),
+    GoRoute(
+      path: '/forums/topics/:id',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final id = int.parse(state.pathParameters['id']!);
+        return ForumTopicDetailScreen(topicId: id);
+      },
+    ),
+    GoRoute(
+      path: '/store/products',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const StoreProductsScreen(),
+    ),
+    GoRoute(
+      path: '/store/products/:id',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final id = int.parse(state.pathParameters['id']!);
+        return StoreProductDetailScreen(productId: id);
+      },
+    ),
+    GoRoute(
+      path: '/orders',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const OrdersListScreen(),
+    ),
+    GoRoute(
+      path: '/orders/:id',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final id = int.parse(state.pathParameters['id']!);
+        return OrderDetailScreen(orderId: id);
+      },
+    ),
+    GoRoute(
+      path: '/quests',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const GamificationScreen(),
+    ),
+    GoRoute(
+      path: '/billing',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const BillingScreen(),
     ),
   ],
 );

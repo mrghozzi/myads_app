@@ -9,8 +9,8 @@ class ApiInterceptor extends Interceptor {
   Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     // Inject API Key (from .env, non-sensitive build config)
     final apiKey = dotenv.env['MOBILE_API_KEY'];
-    if (apiKey != null) {
-      options.headers['X-API-KEY'] = apiKey;
+    if (apiKey != null && apiKey.isNotEmpty) {
+      options.headers['X-API-KEY'] = apiKey.trim();
     }
 
     // Security: Inject Bearer Token from encrypted secure storage
@@ -33,12 +33,14 @@ class ApiInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    // Handle 401 Unauthorized globally
+    // Instead of logging out silently, we will pass the error to the UI
+    // so we can see EXACTLY why the server is rejecting the request (Invalid API Key vs Unauthenticated).
     if (err.response?.statusCode == 401 || err.response?.statusCode == 403) {
-      // Security: Clear token from encrypted secure storage
-      await SecureStorageService.deleteToken();
-      // Navigate to login
-      appRouter.go('/login');
+      print('=== API ERROR DETAILS ===');
+      print('Status: ${err.response?.statusCode}');
+      print('Response: ${err.response?.data}');
+      print('Headers sent: ${err.requestOptions.headers}');
+      print('========================');
     }
     
     return super.onError(err, handler);

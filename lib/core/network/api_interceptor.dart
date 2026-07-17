@@ -13,10 +13,11 @@ class ApiInterceptor extends Interceptor {
       options.headers['X-API-KEY'] = apiKey.trim();
     }
 
-    // Security: Inject Bearer Token from encrypted secure storage
+    // Security: Inject Bearer Token from secure storage
     final token = await SecureStorageService.getToken();
     if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';
+      options.headers['X-Authorization'] = 'Bearer $token'; // Bypass shared hosting header stripping
     }
 
     // Force Accept JSON

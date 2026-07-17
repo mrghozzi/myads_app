@@ -2,6 +2,15 @@
 
 ---
 
+## v1.4.2
+> **Authentication Stability Update** — Bypassed Android Keystore bugs and Shared Hosting header stripping.
+
+### Critical Fixes
+* **Keystore Bug Bypass**: Replaced `flutter_secure_storage` with `shared_preferences` to fix a major issue where the Sanctum Token was silently dropped by MIUI/Xiaomi devices, causing immediate logouts.
+* **Shared Hosting Header Fix**: Implemented a fallback `X-Authorization` header sent by the app, which the backend `index.php` dynamically maps back to `Authorization`. This permanently solves issues with `Bearer` tokens being stripped by LiteSpeed, FastCGI, or cPanel security rules, preventing `401 Unauthenticated` errors.
+
+---
+
 ## v1.4.1
 > **Private Messages Fix** — Resolved a critical red-screen crash on the Messages page caused by API response format mismatches and null safety violations.
 

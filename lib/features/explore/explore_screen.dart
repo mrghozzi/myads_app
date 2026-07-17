@@ -62,7 +62,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                       )
                     : null,
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.1),
+                fillColor: Colors.white.withValues(alpha: 0.1),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
                   borderSide: BorderSide.none,
@@ -134,9 +134,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           Container(
             height: 120,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
+              color: Colors.white.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
             ),
             child: const Center(
               child: Text('Search to discover content', style: TextStyle(color: Colors.white54)),
@@ -176,10 +176,10 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     return ListTile(
       leading: item['img'] != null
           ? CircleAvatar(backgroundImage: NetworkImage(item['img']))
-          : CircleAvatar(backgroundColor: iconColor.withOpacity(0.2), child: Icon(icon, color: iconColor)),
+          : CircleAvatar(backgroundColor: iconColor.withValues(alpha: 0.2), child: Icon(icon, color: iconColor)),
       title: Text(item['title'] ?? '', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
       subtitle: item['subtitle'] != null ? Text(item['subtitle'], style: const TextStyle(color: Colors.white70), maxLines: 1, overflow: TextOverflow.ellipsis) : null,
-      trailing: Icon(Icons.chevron_right, color: Colors.white.withOpacity(0.3)),
+      trailing: Icon(Icons.chevron_right, color: Colors.white.withValues(alpha: 0.3)),
       onTap: () {
         // Handle navigation based on type
         if (item['type'] == 'user') {

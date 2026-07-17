@@ -75,7 +75,7 @@ class GamificationScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: Colors.white),
@@ -109,7 +109,7 @@ class GamificationScreen extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF615dfa).withOpacity(0.1),
+                    color: const Color(0xFF615dfa).withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.star, color: Color(0xFF615dfa), size: 20),
@@ -148,7 +148,7 @@ class GamificationScreen extends ConsumerWidget {
               const SizedBox(height: 12),
               LinearProgressIndicator(
                 value: progressPercent,
-                backgroundColor: Colors.grey.withOpacity(0.2),
+                backgroundColor: Colors.grey.withValues(alpha: 0.2),
                 valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF615dfa)),
               ),
             ]

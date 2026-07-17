@@ -123,7 +123,7 @@ class ForumTopicDetailScreen extends ConsumerWidget {
       ),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF222630) : Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey.withOpacity(0.2))),
+        border: Border(top: BorderSide(color: Colors.grey.withValues(alpha: 0.2))),
       ),
       child: Row(
         children: [

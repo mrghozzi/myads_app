@@ -169,7 +169,7 @@ flutter build apk --release
 
 ## API Requirements
 
-The app requires the MYADS backend API (v4.3.4+) with the following:
+The app requires the MYADS backend API (v4.4.5+) with the following:
 - Laravel Sanctum enabled
 - Admin-generated API key configured in `.env` (sent via the `X-API-KEY` header only; query parameter not accepted)
 - API rate limiting enabled: `/api/login` (5/min), `/api/register` (3/min)
@@ -182,4 +182,4 @@ See `Documents/API_DOCS.md` in the main project for full endpoint documentation.
 
 ## License
 
-MIT — Part of the MYADS v4.3.4 project by mrghozzi.
+MIT — Part of the MYADS v4.4.5 project by mrghozzi.

@@ -2,6 +2,14 @@
 
 ---
 
+## v1.4.4+4
+> **Bug Fix** — Fixed an issue where the user object was missing in the API responses.
+
+### Bug Fixes
+* **Missing User in Feed:** The backend has been updated to correctly retrieve and include the user relation in the `/portal` and `/profile` APIs, resolving the "unknown" display name and missing profile pictures issue in the mobile app.
+
+---
+
 ## v1.4.3
 > **Stability & UI Rendering Fixes** — Provider migrations and User data hydration.
 

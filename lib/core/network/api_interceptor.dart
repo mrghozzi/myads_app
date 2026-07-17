@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/secure_storage_service.dart';
@@ -36,11 +37,11 @@ class ApiInterceptor extends Interceptor {
     // Instead of logging out silently, we will pass the error to the UI
     // so we can see EXACTLY why the server is rejecting the request (Invalid API Key vs Unauthenticated).
     if (err.response?.statusCode == 401 || err.response?.statusCode == 403) {
-      print('=== API ERROR DETAILS ===');
-      print('Status: ${err.response?.statusCode}');
-      print('Response: ${err.response?.data}');
-      print('Headers sent: ${err.requestOptions.headers}');
-      print('========================');
+      debugPrint('=== API ERROR DETAILS ===');
+      debugPrint('Status: ${err.response?.statusCode}');
+      debugPrint('Response: ${err.response?.data}');
+      debugPrint('Headers sent: ${err.requestOptions.headers}');
+      debugPrint('========================');
     }
     
     return super.onError(err, handler);

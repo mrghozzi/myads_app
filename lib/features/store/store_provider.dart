@@ -3,7 +3,7 @@ import '../../../core/network/api_client.dart';
 
 final storeProductsProvider = FutureProvider<List<dynamic>>((ref) async {
   final response = await ApiClient.instance.get('/store/products');
-  return response.data['data']['data'] ?? []; // Assuming paginated response
+  return response.data['data'] ?? []; // Assuming paginated response
 });
 
 final productDetailProvider = FutureProvider.family<Map<String, dynamic>, int>((ref, id) async {
@@ -13,5 +13,5 @@ final productDetailProvider = FutureProvider.family<Map<String, dynamic>, int>((
 
 final knowledgebaseProvider = FutureProvider.family<List<dynamic>, int>((ref, productId) async {
   final response = await ApiClient.instance.get('/store/products/$productId/knowledgebase');
-  return response.data['data']['data'] ?? []; // Assuming paginated
+  return response.data['data'] ?? []; // Assuming paginated
 });

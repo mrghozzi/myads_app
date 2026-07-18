@@ -2,6 +2,17 @@
 
 ---
 
+## v1.4.5+5
+> **Feature & Bug Fixes** — Explore Screen Redesign, Store & Forums API integration.
+
+### Core Features
+* **Explore Screen (Superdesign)**: Redesigned the explore screen using the `.superdesign` styling, featuring premium grid layouts for Stores (Products), Forums (Categories & Topics), and dynamic search functionality.
+
+### Bug Fixes
+* **Store Integration**: Fixed `TypeError` (`type 'String' is not a subtype of type 'int'`) in `store_provider.dart` caused by incorrect JSON list mapping, allowing products and categories to load seamlessly.
+* **Forums Integration**: Resolved an issue where selecting a Forum category hung indefinitely. The backend API was returning `403 Unauthorized` due to a mismatch in `visibility` logic. The app now correctly handles and displays public, member, and moderator categories and topics.
+
+
 ## v1.4.4+4
 > **Bug Fix** — Fixed an issue where the user object was missing in the API responses.
 

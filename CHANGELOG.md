@@ -10,6 +10,8 @@
 
 ### Bug Fixes
 * **Store Integration**: Fixed `TypeError` (`type 'String' is not a subtype of type 'int'`) in `store_provider.dart` caused by incorrect JSON list mapping, allowing products and categories to load seamlessly.
+* **Store Data Mapping**: Updated product item mappings in Flutter to use `thumbnail` and `title` keys instead of legacy `img` and `name` to correctly match `ProductResource` API output.
+* **Store Knowledgebase Fix**: Fixed `knowledgebaseProvider` to correctly access nested data arrays in the paginated response, preventing infinite loading on product detail screens.
 * **Forums Integration**: Resolved an issue where selecting a Forum category hung indefinitely. The backend API was returning `403 Unauthorized` due to a mismatch in `visibility` logic. The app now correctly handles and displays public, member, and moderator categories and topics.
 
 

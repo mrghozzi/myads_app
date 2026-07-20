@@ -27,8 +27,8 @@ class StoreProductDetailScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (product['img'] != null)
-                  Image.network(product['img'], height: 250, fit: BoxFit.cover)
+                if (product['thumbnail'] != null)
+                  Image.network(product['thumbnail'], height: 250, fit: BoxFit.cover)
                 else
                   Container(height: 250, color: Colors.grey[800], child: const Icon(Icons.image, size: 100)),
                 Padding(
@@ -41,7 +41,7 @@ class StoreProductDetailScreen extends ConsumerWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              product['name'] ?? '',
+                              product['title'] ?? '',
                               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                             ),
                           ),

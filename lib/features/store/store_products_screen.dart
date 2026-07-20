@@ -57,8 +57,8 @@ class StoreProductsScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              child: product['img'] != null
-                  ? Image.network(product['img'], fit: BoxFit.cover)
+              child: product['thumbnail'] != null
+                  ? Image.network(product['thumbnail'], fit: BoxFit.cover)
                   : Container(
                       color: Colors.grey[800],
                       child: const Icon(Icons.shopping_bag, size: 50, color: Colors.white54),
@@ -70,7 +70,7 @@ class StoreProductsScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    product['name'] ?? '',
+                    product['title'] ?? '',
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

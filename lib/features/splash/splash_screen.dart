@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dio/dio.dart';
 import '../../core/services/secure_storage_service.dart';
 import '../../core/network/api_client.dart';
 
@@ -63,7 +64,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
     // Security: Validate token is still valid server-side before navigating
     try {
-      final response = await ApiClient.instance.get('/settings/account');
+      final response = await ApiClient.instance.get('/user');
       if (!mounted) return;
       if (response.statusCode == 200) {
         context.go('/home');
@@ -72,12 +73,20 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
         await SecureStorageService.deleteToken();
         if (mounted) context.go('/login');
       }
+    } on DioException catch (e) {
+      if (!mounted) return;
+      if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+        await SecureStorageService.deleteToken();
+        context.go('/login');
+      } else {
+        final stillHasToken = await SecureStorageService.hasToken();
+        context.go(stillHasToken ? '/home' : '/login');
+      }
     } catch (_) {
-      // Network error or 401 — the interceptor will handle 401 cleanup
-      // For other errors, still try to proceed if token exists
+      // Network error 
       if (!mounted) return;
       final stillHasToken = await SecureStorageService.hasToken();
-      if (mounted) context.go(stillHasToken ? '/home' : '/login');
+      context.go(stillHasToken ? '/home' : '/login');
     }
   }
 

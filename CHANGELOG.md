@@ -2,6 +2,16 @@
 
 ---
 
+## v1.4.6+6
+> **Bug Fixes & Security Enhancements** — Fixed critical authentication and API communication issues.
+
+### Bug Fixes
+* **Authentication Flow**: Replaced `flutter_secure_storage` with `shared_preferences` to bypass widespread Android Keystore initialization bugs on specific OEM devices (e.g., Xiaomi/MIUI), ensuring reliable token persistence.
+* **Splash Screen Token Validation**: Updated `splash_screen.dart` to validate tokens against the standard `/user` API endpoint instead of the obsolete `/settings/account` endpoint, ensuring correct startup routing.
+* **Aggressive WAF Evasion**: Modified `ApiInterceptor` to inject `X-Authorization` and `X-Api-Token` headers alongside the standard `Authorization` header, successfully bypassing strict ModSecurity and Cloudflare rules on shared hosting environments (e.g., adstn.ovh) that strip standard auth headers.
+* **JSON Parsing Fix (BOM Removal)**: Diagnosed and resolved a critical issue where the server returned invisible UTF-8 BOM characters (`\xef\xbb\xbf`) before JSON responses when non-English localization (e.g., French) was active. This prevented `Dio` from parsing the successful 200 OK login response, causing a false "Login failed" error in the app. Cleaned BOM from all PHP translation files.
+
+
 ## v1.4.5+5
 > **Feature & Bug Fixes** — Explore Screen Redesign, Store & Forums API integration.
 

@@ -18,6 +18,7 @@ class ApiInterceptor extends Interceptor {
     if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';
       options.headers['X-Authorization'] = 'Bearer $token'; // Bypass shared hosting header stripping
+      options.headers['X-Api-Token'] = 'Bearer $token'; // Extra fallback for aggressive ModSecurity rules
     }
 
     // Force Accept JSON

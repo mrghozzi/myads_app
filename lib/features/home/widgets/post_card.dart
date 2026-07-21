@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
@@ -66,12 +66,12 @@ class _PostCardState extends ConsumerState<PostCard> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _reactionItem('ðŸ‘', 'like'),
-              _reactionItem('â¤ï¸', 'love'),
-              _reactionItem('ðŸ˜‚', 'haha'),
-              _reactionItem('ðŸ˜®', 'wow'),
-              _reactionItem('ðŸ˜¢', 'sad'),
-              _reactionItem('ðŸ˜¡', 'angry'),
+              _reactionItem('👍', 'like'),
+              _reactionItem('❤️', 'love'),
+              _reactionItem('😂', 'haha'),
+              _reactionItem('😮', 'wow'),
+              _reactionItem('😢', 'sad'),
+              _reactionItem('😡', 'angry'),
             ],
           ),
         ),

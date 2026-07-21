@@ -2,6 +2,14 @@
 
 ---
 
+## v1.4.7+7
+> **Bug Fixes** — Fixed broken emojis and search functionality.
+
+### Bug Fixes
+* **Reactions Emoji Encode Fix**: Fixed a visual bug where the native reaction emojis displayed as garbled Mojibake characters due to incorrect file encoding in `post_card.dart` and `clips_screen.dart`.
+* **Search Fix (API compatibility)**: Resolved the "Network error" shown in the Explore screen when searching for members. The error was caused by the backend API returning a 500 error due to a mismatch in the expected `name` column, which is now fixed on the server.
+
+
 ## v1.4.6+6
 > **Bug Fixes & Security Enhancements** — Fixed critical authentication and API communication issues.
 

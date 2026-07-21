@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -158,12 +158,12 @@ class _ReelItemState extends State<_ReelItem> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _reactionItem('ðŸ‘', 'like'),
-              _reactionItem('â¤ï¸', 'love'),
-              _reactionItem('ðŸ˜‚', 'haha'),
-              _reactionItem('ðŸ˜¯', 'wow'),
-              _reactionItem('ðŸ˜¢', 'sad'),
-              _reactionItem('ðŸ˜¡', 'angry'),
+              _reactionItem('👍', 'like'),
+              _reactionItem('❤️', 'love'),
+              _reactionItem('😂', 'haha'),
+              _reactionItem('😮', 'wow'),
+              _reactionItem('😢', 'sad'),
+              _reactionItem('😡', 'angry'),
             ],
           ),
         ),

@@ -77,15 +77,18 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       if (!mounted) return;
       if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
         await SecureStorageService.deleteToken();
+        if (!mounted) return;
         context.go('/login');
       } else {
         final stillHasToken = await SecureStorageService.hasToken();
+        if (!mounted) return;
         context.go(stillHasToken ? '/home' : '/login');
       }
     } catch (_) {
       // Network error 
       if (!mounted) return;
       final stillHasToken = await SecureStorageService.hasToken();
+      if (!mounted) return;
       context.go(stillHasToken ? '/home' : '/login');
     }
   }

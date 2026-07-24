@@ -1,4 +1,4 @@
-﻿import 'user_model.dart';
+import 'user_model.dart';
 import 'attachment_model.dart';
 import 'activity_card_model.dart';
 import '../utils/url_helper.dart';
@@ -218,6 +218,9 @@ class StatusModel {
 
   /// Whether this post has a rich activity card (Store, Directory, KB, Order)
   bool get hasActivityCard => activityCard != null;
+
+  /// Helper getter for repost status ID
+  int? get repostStatusId => repostRecord?.originalStatusId;
 }
 
 class RepostRecordModel {

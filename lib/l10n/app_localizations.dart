@@ -247,6 +247,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Updated successfully'**
   String get updateSuccessful;
+
+  /// No description provided for @whatsOnYourMind.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s on your mind?'**
+  String get whatsOnYourMind;
+
+  /// No description provided for @writePost.
+  ///
+  /// In en, this message translates to:
+  /// **'Write Post'**
+  String get writePost;
+
+  /// No description provided for @uploadPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Photos'**
+  String get uploadPhotos;
+
+  /// No description provided for @uploadVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Video'**
+  String get uploadVideo;
+
+  /// No description provided for @recordAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Record Audio'**
+  String get recordAudio;
+
+  /// No description provided for @uploadMusic.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Music'**
+  String get uploadMusic;
+
+  /// No description provided for @uploadFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Files'**
+  String get uploadFiles;
+
+  /// No description provided for @uploadClips.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Clips'**
+  String get uploadClips;
+
+  /// No description provided for @insertLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Insert Link'**
+  String get insertLink;
+
+  /// No description provided for @quoteRepost.
+  ///
+  /// In en, this message translates to:
+  /// **'Quote Repost'**
+  String get quoteRepost;
+
+  /// No description provided for @publishAsPost.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish as Post'**
+  String get publishAsPost;
+
+  /// No description provided for @saveToDirectory.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to Directory'**
+  String get saveToDirectory;
+
+  /// No description provided for @directoryCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Directory Category'**
+  String get directoryCategory;
+
+  /// No description provided for @directoryName.
+  ///
+  /// In en, this message translates to:
+  /// **'Site Name'**
+  String get directoryName;
+
+  /// No description provided for @directoryTags.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get directoryTags;
+
+  /// No description provided for @shareToCommunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Share to Community'**
+  String get shareToCommunity;
+
+  /// No description provided for @more.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get more;
+
+  /// No description provided for @select.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get select;
+
+  /// No description provided for @createPost.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Post'**
+  String get createPost;
+
+  /// No description provided for @editPost.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Post'**
+  String get editPost;
+
+  /// No description provided for @spread.
+  ///
+  /// In en, this message translates to:
+  /// **'Spread'**
+  String get spread;
 }
 
 class _AppLocalizationsDelegate

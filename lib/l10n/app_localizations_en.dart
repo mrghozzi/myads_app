@@ -82,4 +82,67 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get updateSuccessful => 'Updated successfully';
+
+  @override
+  String get whatsOnYourMind => 'What\'s on your mind?';
+
+  @override
+  String get writePost => 'Write Post';
+
+  @override
+  String get uploadPhotos => 'Upload Photos';
+
+  @override
+  String get uploadVideo => 'Upload Video';
+
+  @override
+  String get recordAudio => 'Record Audio';
+
+  @override
+  String get uploadMusic => 'Upload Music';
+
+  @override
+  String get uploadFiles => 'Upload Files';
+
+  @override
+  String get uploadClips => 'Upload Clips';
+
+  @override
+  String get insertLink => 'Insert Link';
+
+  @override
+  String get quoteRepost => 'Quote Repost';
+
+  @override
+  String get publishAsPost => 'Publish as Post';
+
+  @override
+  String get saveToDirectory => 'Save to Directory';
+
+  @override
+  String get directoryCategory => 'Directory Category';
+
+  @override
+  String get directoryName => 'Site Name';
+
+  @override
+  String get directoryTags => 'Tags';
+
+  @override
+  String get shareToCommunity => 'Share to Community';
+
+  @override
+  String get more => 'More';
+
+  @override
+  String get select => 'Select';
+
+  @override
+  String get createPost => 'Create Post';
+
+  @override
+  String get editPost => 'Edit Post';
+
+  @override
+  String get spread => 'Spread';
 }

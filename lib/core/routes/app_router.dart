@@ -161,10 +161,41 @@ final appRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>?;
+        final qParams = state.uri.queryParameters;
+
+        final text = extra?['text'] as String? ?? qParams['text'];
+        final linkUrl = extra?['link_url'] as String? ?? qParams['url'];
+        final filePaths = extra?['filePaths'] as List<String>?;
+        final repostStatus = extra?['repost_status'] as StatusModel?;
+        final repostStatusId = extra?['repost_status_id'] as int? ?? (qParams['repost_status_id'] != null ? int.tryParse(qParams['repost_status_id']!) : null);
+        final groupId = extra?['group_id'] as int? ?? (qParams['group_id'] != null ? int.tryParse(qParams['group_id']!) : null);
+
         return ComposerScreen(
           initialStatus: extra?['status'] as StatusModel?,
-          initialText: extra?['text'] as String?,
-          initialFilePaths: extra?['filePaths'] as List<String>?,
+          initialText: text,
+          initialLinkUrl: linkUrl,
+          initialFilePaths: filePaths,
+          initialRepostStatus: repostStatus,
+          initialRepostStatusId: repostStatusId,
+          initialGroupId: groupId,
+        );
+      },
+    ),
+    GoRoute(
+      path: '/share',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        final qParams = state.uri.queryParameters;
+
+        final text = extra?['text'] as String? ?? qParams['text'];
+        final linkUrl = extra?['link_url'] as String? ?? qParams['url'];
+        final filePaths = extra?['filePaths'] as List<String>?;
+
+        return ComposerScreen(
+          initialText: text,
+          initialLinkUrl: linkUrl,
+          initialFilePaths: filePaths,
         );
       },
     ),

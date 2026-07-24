@@ -1,6 +1,6 @@
 # MYADS Mobile App
 
-> **Version:** 1.4.7+7 | **Platform:** Android | **Framework:** Flutter 3.27+ / Dart
+> **Version:** 1.4.8+8 | **Platform:** Android | **Framework:** Flutter 3.27+ / Dart
 
 The official first-party mobile client for the [MYADS](https://github.com/mrghozzi/myads) social network and ad exchange platform. Built with Flutter and powered by the MYADS Laravel REST API (Sanctum).
 
@@ -25,8 +25,12 @@ The official first-party mobile client for the [MYADS](https://github.com/mrghoz
 - **Sharing:** Share posts via the native share sheet.
 
 ### Publishing & Content Creation
-- **Premium Post Composer:** Redesigned post composer adhering to `.superdesign` styling, featuring rich media previews, interactive attachment chips, and dynamic post-type selection.
-- **External Share Intents:** Share text, links, and media (images, videos, files) from any external Android application directly into the MYADS composer as a draft.
+- **Web Composer Parity & .superdesign:** Fully overhauled post composer adhering to `.superdesign` styling, featuring 9 post kinds (`text`, `gallery`, `video`, `audio`, `music`, `file`, `clips`, `link`, `repost`).
+- **Live Link Previews:** Real-time URL auto-detection and API preview fetching (`/api/v1/statuses/link-preview`), rendering domain, image thumbnail, title, and description cards.
+- **Directory Publishing Mode:** Seamless toggle between "Publish as Post" (`publish_mode: post`) and "Save to Web Directory" (`publish_mode: directory_only`) with site name, category dropdown, and tags.
+- **Member Identity & Group Context:** Header with member `HexagonAvatar`, username, and target destination selector (Public Community Feed vs User Groups).
+- **Quote Repost Card:** Inline quoted status card preview with cancel affordance when reposting content.
+- **External Share Route & Intents:** Dedicated `/share` route and query parameter extraction (`text`, `url`, `group_id`, `repost_status_id`) supporting Android share intent pre-filling.
 - **Promoted Posts (Ads):** Integrated rendering of Promoted Posts injected natively into the community feed with a prominent "Promoted" badge.
 - **SafeArea Support:** Global protection to prevent UI elements from overlapping with Android system navigation gestures.
 

@@ -10,6 +10,11 @@ class PostsRepository {
     return response.data as Map<String, dynamic>;
   }
 
+  Future<Map<String, dynamic>> fetchLinkPreview(String linkUrl) async {
+    final response = await _dio.post('/statuses/link-preview', data: {'link_url': linkUrl});
+    return response.data as Map<String, dynamic>;
+  }
+
   Future<StatusModel> createPost(FormData formData) async {
     final response = await _dio.post('/statuses', data: formData);
     return StatusModel.fromJson(response.data['status']);

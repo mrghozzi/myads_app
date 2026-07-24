@@ -2,6 +2,19 @@
 
 ---
 
+## v1.4.8+8
+> **Feature Update & Post Composer Redesign** — Complete Web Post Composer parity, live link previews, directory publishing, group targeting, and `.superdesign` UI.
+
+### Features & Enhancements
+* **Web Post Composer Parity (9 Post Kinds)**: Fully overhauled the mobile composer screen to support all 9 post kinds: Text, Image Gallery (up to 10 photos with grid preview and individual delete), Video, Audio, Music, File Attachments (up to 5 documents), Clips, Link, and Quote Reposts.
+* **Live Link Previews (`/api/v1/statuses/link-preview`)**: Auto-detects URLs typed into text input or inserted via Link tool, automatically fetching and rendering rich link preview cards (image thumbnail, title, description, domain).
+* **Directory Publishing Options**: Integrated publish mode toggle between "Publish as Post" (`publish_mode: post`) and "Save to Web Directory" (`publish_mode: directory_only`), complete with Site Name, Directory Category selector, and Tags inputs.
+* **Member Identity & Group Context**: Displays user `HexagonAvatar`, username, and target destination selector (Public Community Feed vs User Groups).
+* **Quote Repost Card**: Renders inline quoted status preview cards with author info and a clear affordance when reposting content.
+* **Deep Linking & Share Route**: Added native `/share` route in `app_router.dart` and expanded `/compose` query parameter extraction (`text`, `url`, `group_id`, `repost_status_id`) for seamless external sharing.
+* **Color-Coded Toolbar (.superdesign)**: Designed a responsive toolbar featuring color-coded tool buttons matching MYADS design system tokens (Violet `#615DFA`, Cyan `#00D7D2`, Coral `#FF5E3A`, Amber `#FFB100`, Slate `#64748B`, Blue `#00B2FF`) with an expandable extra tools drawer.
+
+
 ## v1.4.7+7
 > **Bug Fixes** — Fixed broken emojis and search functionality.
 

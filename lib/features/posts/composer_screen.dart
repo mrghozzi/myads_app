@@ -258,14 +258,14 @@ class _ComposerScreenState extends ConsumerState<ComposerScreen> {
 
       for (int i = 0; i < _selectedFiles.length; i++) {
         final file = _selectedFiles[i];
-        String fieldName = 'files[$i]';
+        String fieldName = 'files[]';
 
         if (_postKind == 'gallery') {
-          fieldName = 'images[$i]';
+          fieldName = 'images[]';
         } else if (_postKind == 'video' || _postKind == 'clips') {
-          fieldName = 'videos[$i]';
+          fieldName = 'videos[]';
         } else if (_postKind == 'audio' || _postKind == 'music') {
-          fieldName = 'audios[$i]';
+          fieldName = 'audios[]';
         }
 
         formData.files.add(MapEntry(
@@ -285,8 +285,15 @@ class _ComposerScreenState extends ConsumerState<ComposerScreen> {
       }
     } catch (e) {
       if (mounted) {
+        String errorMsg = 'Error creating post: $e';
+        if (e is DioException && e.response?.data is Map) {
+          final data = e.response!.data as Map;
+          if (data['message'] != null && data['message'].toString().isNotEmpty) {
+            errorMsg = data['message'].toString();
+          }
+        }
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error creating post: $e')),
+          SnackBar(content: Text(errorMsg)),
         );
       }
     } finally {

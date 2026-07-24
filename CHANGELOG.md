@@ -2,6 +2,14 @@
 
 ---
 
+## v1.4.9+9
+> **Bug Fix & Media Upload Fix** — Resolved HTTP 422 errors when uploading videos, clips, audio, and file attachments in the Post Composer.
+
+### Bug Fixes
+* **Media Upload Multipart Key Fix**: Resolved a critical HTTP 422 error when uploading videos (`Clips`/`Video`), audio, music, and file attachments. Fixed Dio `FormData` field key formatting from indexed notation (`videos[0]`) to array notation (`videos[]`, `images[]`, `audios[]`, `files[]`), allowing Laravel's request validation and `StatusPostService` to correctly parse uploaded file arrays.
+* **Enhanced Error Feedback**: Improved exception handling in `composer_screen.dart` to parse and render clean server error messages in user SnackBar notifications instead of displaying raw `DioException [bad response]` debug traces.
+
+
 ## v1.4.8+8
 > **Feature Update & Post Composer Redesign** — Complete Web Post Composer parity, live link previews, directory publishing, group targeting, and `.superdesign` UI.
 

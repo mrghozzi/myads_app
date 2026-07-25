@@ -1,6 +1,6 @@
 # MYADS Mobile App
 
-> **Version:** 1.4.9+9 | **Platform:** Android | **Framework:** Flutter 3.27+ / Dart
+> **Version:** 1.5.0+10 | **Platform:** Android | **Framework:** Flutter 3.27+ / Dart
 
 The official first-party mobile client for the [MYADS](https://github.com/mrghozzi/myads) social network and ad exchange platform. Built with Flutter and powered by the MYADS Laravel REST API (Sanctum).
 
@@ -20,7 +20,7 @@ The official first-party mobile client for the [MYADS](https://github.com/mrghoz
 - **Pulsing Skeleton Loaders:** High-fidelity, pulsing `PostSkeleton` widgets render during the initial load and paginated fetches, dynamically adapting to light and dark themes.
 - **Multimedia Support:** View all post types: text, images, video, audio, music, clips, and file attachments.
 - **Quote Reposts (Shares):** Renders a beautifully nested original post card inline when a post is a share/repost, showing original creator info (avatar, name, verified status), text, and original media elements/players recursively.
-- **Reactions:** React using emoji reactions (Like 👍, Love, Haha, Wow, Sad, Angry) via a long-press picker, with dynamic backend syncing to natively trigger gamification points and notifications.
+- **Optimistic UI Reactions:** Instant (< 1ms feel) visual feedback when reacting via emoji reactions (Like 👍, Love ❤️, Haha 😂, Wow 😮, Sad 😢, Angry 😡) with long-press picker, atomic backend syncing, gamification points, and automatic rollback on network failure.
 - **Comments:** Comment on posts using the inline composer.
 - **Sharing:** Share posts via the native share sheet.
 

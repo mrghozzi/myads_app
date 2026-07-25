@@ -128,20 +128,32 @@ class _ReelItemState extends State<_ReelItem> {
   Future<void> _toggleReaction(String newReaction) async {
     final type = widget.status.reactionType;
     final subjectId = widget.status.interactionSubjectId;
-    
+
+    final oldHasReacted = _hasReacted;
+    final oldReactionType = _reactionType;
+    final oldLikesCount = _likesCount;
+
+    // Optimistic UI Update (< 1ms feedback)
+    setState(() {
+      if (_hasReacted && _reactionType == newReaction) {
+        _hasReacted = false;
+        _reactionType = null;
+        _likesCount = (_likesCount > 0) ? _likesCount - 1 : 0;
+      } else {
+        if (!_hasReacted) _likesCount++;
+        _hasReacted = true;
+        _reactionType = newReaction;
+      }
+    });
+
     final success = await ReactionService.toggleReaction(subjectId, type, newReaction);
 
-    if (success) {
+    if (!success && mounted) {
+      // Revert state if network call fails
       setState(() {
-        if (_hasReacted && _reactionType == newReaction) {
-          _hasReacted = false;
-          _reactionType = null;
-          _likesCount = (_likesCount > 0) ? _likesCount - 1 : 0;
-        } else {
-          if (!_hasReacted) _likesCount++;
-          _hasReacted = true;
-          _reactionType = newReaction;
-        }
+        _hasReacted = oldHasReacted;
+        _reactionType = oldReactionType;
+        _likesCount = oldLikesCount;
       });
     }
   }

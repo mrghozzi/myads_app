@@ -38,19 +38,31 @@ class _PostCardState extends ConsumerState<PostCard> {
     final type = widget.status.reactionType;
     final subjectId = widget.status.interactionSubjectId;
     
+    final oldHasReacted = hasReacted;
+    final oldReactionType = reactionType;
+    final oldLikesCount = likesCount;
+
+    // Optimistic UI Update (< 1ms feedback)
+    setState(() {
+      if (hasReacted && reactionType == newReaction) {
+        hasReacted = false;
+        reactionType = null;
+        likesCount = (likesCount > 0) ? likesCount - 1 : 0;
+      } else {
+        if (!hasReacted) likesCount++;
+        hasReacted = true;
+        reactionType = newReaction;
+      }
+    });
+
     final success = await ReactionService.toggleReaction(subjectId, type, newReaction);
 
-    if (success) {
+    if (!success && mounted) {
+      // Revert state if network call fails
       setState(() {
-        if (hasReacted && reactionType == newReaction) {
-          hasReacted = false;
-          reactionType = null;
-          likesCount--;
-        } else {
-          if (!hasReacted) likesCount++;
-          hasReacted = true;
-          reactionType = newReaction;
-        }
+        hasReacted = oldHasReacted;
+        reactionType = oldReactionType;
+        likesCount = oldLikesCount;
       });
     }
   }

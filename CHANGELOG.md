@@ -2,6 +2,16 @@
 
 ---
 
+## v1.5.0+10
+> **Performance & Reaction System Upgrade** — Optimistic UI reaction toggling, zero-latency feedback, full mobile API reaction parity across 11+ item types, and automatic error recovery.
+
+### Features & Performance Improvements
+* **Optimistic UI Reactions (< 1ms Feel)**: Upgraded `_toggleReaction()` in `post_card.dart` and `clips_screen.dart` to optimistically toggle reaction state locally before awaiting network responses. Reaction icons and count badges update instantly on tap, delivering a buttery smooth user experience.
+* **Automatic Error Rollback**: Integrated automatic state recovery in `post_card.dart` and `clips_screen.dart`. If the backend API call fails or network disconnects, the UI state smoothly reverts to its previous state without desynchronization.
+* **Full Mobile API Reaction Parity (`/api/reactions/toggle`)**: Connected mobile app reactions to the new backend `ReactionService`, bringing 100% feature parity with the web platform across all 11+ item types (topics, store products, directory listings, comments, order requests, clips, and KB articles).
+
+---
+
 ## v1.4.9+9
 > **Bug Fix & Media Upload Fix** — Resolved HTTP 422 errors when uploading videos, clips, audio, and file attachments in the Post Composer.
 

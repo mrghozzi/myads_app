@@ -43,8 +43,10 @@ class _ComposerScreenState extends ConsumerState<ComposerScreen> {
   final TextEditingController _linkUrlController = TextEditingController();
   final TextEditingController _directoryNameController = TextEditingController();
   final TextEditingController _directoryTagsController = TextEditingController();
+  final TextEditingController _videoTitleController = TextEditingController();
 
   List<File> _selectedFiles = [];
+  File? _videoThumbnailFile;
   bool _isLoading = false;
   bool _isFetchingPreview = false;
   bool _showMoreTools = false;
@@ -113,6 +115,7 @@ class _ComposerScreenState extends ConsumerState<ComposerScreen> {
     _linkUrlController.dispose();
     _directoryNameController.dispose();
     _directoryTagsController.dispose();
+    _videoTitleController.dispose();
     super.dispose();
   }
 
@@ -254,7 +257,18 @@ class _ComposerScreenState extends ConsumerState<ComposerScreen> {
         }
       }
 
+      if (_postKind == 'video' && _videoTitleController.text.trim().isNotEmpty) {
+        map['video_title'] = _videoTitleController.text.trim();
+      }
+
       final formData = FormData.fromMap(map);
+
+      if (_videoThumbnailFile != null) {
+        formData.files.add(MapEntry(
+          'video_thumbnail',
+          await MultipartFile.fromFile(_videoThumbnailFile!.path, filename: p.basename(_videoThumbnailFile!.path)),
+        ));
+      }
 
       for (int i = 0; i < _selectedFiles.length; i++) {
         final file = _selectedFiles[i];
@@ -680,6 +694,79 @@ class _ComposerScreenState extends ConsumerState<ComposerScreen> {
                                 ),
                               ),
                             ],
+                          ],
+                        ),
+                      ),
+                    ],
+
+                    // Video Title & Thumbnail Cover Block
+                    if (_postKind == 'video') ...[
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: surfaceColor,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: primaryColor.withValues(alpha: 0.3)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(Icons.movie_creation_outlined, color: Color(0xFF615DFA), size: 20),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'إعدادات الفيديو (Video Settings)',
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: primaryColor),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            TextField(
+                              controller: _videoTitleController,
+                              style: TextStyle(fontSize: 14, color: textColor),
+                              decoration: InputDecoration(
+                                labelText: 'عنوان الفيديو (Video Title)',
+                                hintText: 'أدخل عنواناً جذاباً للفيديو...',
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                                isDense: true,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: OutlinedButton.icon(
+                                    style: OutlinedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                    ),
+                                    onPressed: () async {
+                                      final result = await FilePicker.pickFiles(type: FileType.image);
+                                      if (result != null && result.files.single.path != null) {
+                                        setState(() => _videoThumbnailFile = File(result.files.single.path!));
+                                      }
+                                    },
+                                    icon: const Icon(Icons.image_outlined, size: 18),
+                                    label: Text(
+                                      _videoThumbnailFile != null ? 'تغيير صورة الغلاف' : 'رفع غلاف للفيديو (Thumbnail)',
+                                      style: const TextStyle(fontSize: 13),
+                                    ),
+                                  ),
+                                ),
+                                if (_videoThumbnailFile != null) ...[
+                                  const SizedBox(width: 8),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.file(_videoThumbnailFile!, width: 44, height: 44, fit: BoxFit.cover),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.close, color: Colors.red, size: 18),
+                                    onPressed: () => setState(() => _videoThumbnailFile = null),
+                                  ),
+                                ],
+                              ],
+                            ),
                           ],
                         ),
                       ),

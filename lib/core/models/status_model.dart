@@ -84,6 +84,10 @@ class StatusModel {
   final String? displayTitle;
   final String? displayContent;
   final String? displayImage;
+  final String? videoTitle;
+  final String? videoThumbnail;
+  final bool hasSaved;
+  final bool isFollowing;
   final MediaInfo? media;
   final List<String> gallery;
   final List<GalleryItemModel> galleryItems;
@@ -93,6 +97,7 @@ class StatusModel {
   final int reactionType;
   final RepostRecordModel? repostRecord;
   final bool isPromotedAd;
+  final List<StatusModel>? suggestedVideos;
 
   StatusModel({
     required this.id,
@@ -116,6 +121,10 @@ class StatusModel {
     this.displayTitle,
     this.displayContent,
     this.displayImage,
+    this.videoTitle,
+    this.videoThumbnail,
+    this.hasSaved = false,
+    this.isFollowing = false,
     this.media,
     this.gallery = const [],
     this.galleryItems = const [],
@@ -125,6 +134,7 @@ class StatusModel {
     required this.reactionType,
     this.repostRecord,
     this.isPromotedAd = false,
+    this.suggestedVideos,
   });
 
   factory StatusModel.fromJson(Map<String, dynamic> json) {
@@ -173,6 +183,14 @@ class StatusModel {
       repostRecord = RepostRecordModel.fromJson(json['repost_record'] as Map<String, dynamic>);
     }
 
+    // Parse suggested videos
+    List<StatusModel>? suggestedVideos;
+    if (json['suggested_videos'] != null && json['suggested_videos'] is List) {
+      suggestedVideos = (json['suggested_videos'] as List)
+          .map((e) => StatusModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    }
+
     return StatusModel(
       id: json['id'] is int ? json['id'] : int.tryParse(json['id']?.toString() ?? '0') ?? 0,
       text: json['text']?.toString() ?? '',
@@ -195,6 +213,10 @@ class StatusModel {
       displayTitle: json['display_title']?.toString(),
       displayContent: json['display_content']?.toString(),
       displayImage: json['display_image'] != null ? UrlHelper.normalizeUrl(json['display_image'].toString()) : null,
+      videoTitle: json['video_title']?.toString() ?? json['display_title']?.toString(),
+      videoThumbnail: json['video_thumbnail'] != null ? UrlHelper.normalizeUrl(json['video_thumbnail'].toString()) : null,
+      hasSaved: json['has_saved'] == true || json['is_saved'] == true,
+      isFollowing: json['is_following'] == true,
       media: mediaInfo,
       gallery: galleryList,
       galleryItems: galleryItemsList,
@@ -204,6 +226,7 @@ class StatusModel {
       reactionType: json['reaction_type'] is int ? json['reaction_type'] : int.tryParse(json['reaction_type']?.toString() ?? '0') ?? (json['post_kind'] == 'group' ? 3 : 2),
       repostRecord: repostRecord,
       isPromotedAd: json['is_promoted_ad'] == true,
+      suggestedVideos: suggestedVideos,
     );
   }
 

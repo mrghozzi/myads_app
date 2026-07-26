@@ -2,6 +2,25 @@
 
 ---
 
+## v1.6.0+11
+> **YouTube-Style Video Watch Screen & Mobile API Parity** — Dedicated YouTube-style video watch experience, ambient dark design, publisher hexagon avatar integration, video title & cover thumbnail composer fields, and suggested videos feed.
+
+### Features & Mobile API Enhancements
+* **YouTube-Style Video Watch Screen (`post_details_screen.dart`)**:
+  - Implemented a dedicated YouTube-style watch screen for video posts (`s_type == 10` or `post_kind == video`).
+  - Styled with `@.superdesign` dark ambient theme (`#0F111A`), high-definition 16:9 video player stage, and custom play/pause/scrubber controls.
+  - Integrated publisher card featuring vertical Hexagon Avatar (`HexagonAvatar`) matching web theme aesthetics, username, verified badge, and interactive `+ Follow` / `Following` toggle.
+  - Added uniform compact action bar (Reactions count with optimistic toggle, Save toggle to Saved Clips, and native system Share sheet).
+  - Added expandable Video Title & Description card ("Show More / Show Less").
+  - Integrated a vertical **Suggested Videos** section strictly filtered to video posts only, with play badge overlays and 1-tap navigation to suggested videos.
+* **Post Composer Video Title & Thumbnail Cover Support (`composer_screen.dart`)**:
+  - Added **Video Title (`video_title`)** input field to the video composer block.
+  - Added **Video Thumbnail / Cover (`video_thumbnail`)** file picker with live client-side image preview and multipart file upload.
+* **Mobile API Parity (`StatusResource.php` & `Api\StatusController.php`)**:
+  - Updated API responses (`/api/statuses/{id}`) to return `video_title`, `video_thumbnail`, `is_following`, `is_saved`, and `suggested_videos` collection.
+
+---
+
 ## v1.5.0+10
 > **Performance & Reaction System Upgrade** — Optimistic UI reaction toggling, zero-latency feedback, full mobile API reaction parity across 11+ item types, and automatic error recovery.
 

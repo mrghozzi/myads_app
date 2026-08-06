@@ -45,5 +45,7 @@
   "select": "Select",
   "createPost": "Create Post",
   "editPost": "Edit Post",
-  "spread": "Spread"
+  "spread": "Spread",
+  "originalAudio": "Original Audio",
+  "returnToMainPlayer": "Return to Main Player"
 }

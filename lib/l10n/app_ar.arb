@@ -45,5 +45,7 @@
   "select": "اختر",
   "createPost": "إنشاء منشور",
   "editPost": "تعديل المنشور",
-  "spread": "انشر"
+  "spread": "انشر",
+  "originalAudio": "الصوت الأصلي",
+  "returnToMainPlayer": "العودة للمشغل الرئيسي"
 }

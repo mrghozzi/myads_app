@@ -80,7 +80,7 @@ class _PostCardState extends ConsumerState<PostCard> {
             children: [
               _reactionItem('👍', 'like'),
               _reactionItem('❤️', 'love'),
-              _reactionItem('😂', 'haha'),
+              _reactionItem('😂', 'funny'),
               _reactionItem('😮', 'wow'),
               _reactionItem('😢', 'sad'),
               _reactionItem('😡', 'angry'),
@@ -107,7 +107,7 @@ class _PostCardState extends ConsumerState<PostCard> {
   IconData _getReactionIcon(String? reaction) {
     switch (reaction) {
       case 'love': return Icons.favorite;
-      case 'haha': return Icons.sentiment_very_satisfied;
+      case 'funny': return Icons.sentiment_very_satisfied;
       case 'wow': return Icons.sentiment_neutral;
       case 'sad': return Icons.sentiment_dissatisfied;
       case 'angry': return Icons.sentiment_very_dissatisfied;
@@ -118,7 +118,7 @@ class _PostCardState extends ConsumerState<PostCard> {
   Color _getReactionColor(String? reaction) {
     switch (reaction) {
       case 'love': return Colors.red;
-      case 'haha': return Colors.amber;
+      case 'funny': return Colors.amber;
       case 'wow': return Colors.amber;
       case 'sad': return Colors.blueGrey;
       case 'angry': return Colors.deepOrange;

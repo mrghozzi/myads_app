@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
@@ -153,33 +154,60 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
   }
 
   Future<void> _toggleLike() async {
+    final oldStatus = _currentStatus;
+    final wasLiked = _currentStatus.hasLiked;
+
+    // Optimistic UI Update (< 1ms feedback)
+    setState(() {
+      _currentStatus = StatusModel.fromJson({
+        ..._currentStatus.media != null ? {'media': _currentStatus.media} : {},
+        'id': _currentStatus.id,
+        'has_liked': !wasLiked,
+        'reactions_count': wasLiked
+            ? (_currentStatus.likesCount > 0 ? _currentStatus.likesCount - 1 : 0)
+            : _currentStatus.likesCount + 1,
+      });
+    });
+
     try {
       final response = await ApiClient.instance.post('/reactions/toggle', data: {
-        'subject_id': _currentStatus.interactionSubjectId,
-        'reaction_type': _currentStatus.reactionType,
+        'subject_id': oldStatus.interactionSubjectId,
+        'reaction_type': oldStatus.reactionType,
         'reaction': 'like',
       });
       if (response.data != null) {
         final action = response.data['action']?.toString();
-        setState(() {
-          if (action == 'added') {
-            _currentStatus = StatusModel.fromJson({
-              ..._currentStatus.media != null ? {'media': _currentStatus.media} : {},
-              'id': _currentStatus.id,
-              'has_liked': true,
-              'reactions_count': _currentStatus.likesCount + 1,
-            });
-          } else if (action == 'removed') {
-            _currentStatus = StatusModel.fromJson({
-              ..._currentStatus.media != null ? {'media': _currentStatus.media} : {},
-              'id': _currentStatus.id,
-              'has_liked': false,
-              'reactions_count': _currentStatus.likesCount > 0 ? _currentStatus.likesCount - 1 : 0,
-            });
-          }
-        });
+        if (mounted) {
+          setState(() {
+            if (action == 'added') {
+              _currentStatus = StatusModel.fromJson({
+                ..._currentStatus.media != null ? {'media': _currentStatus.media} : {},
+                'id': _currentStatus.id,
+                'has_liked': true,
+                'reactions_count': oldStatus.likesCount + 1,
+              });
+            } else if (action == 'removed') {
+              _currentStatus = StatusModel.fromJson({
+                ..._currentStatus.media != null ? {'media': _currentStatus.media} : {},
+                'id': _currentStatus.id,
+                'has_liked': false,
+                'reactions_count': oldStatus.likesCount > 0 ? oldStatus.likesCount - 1 : 0,
+              });
+            }
+          });
+        }
       }
-    } catch (_) {}
+    } catch (e) {
+      // On timeout, keep optimistic state (reaction was likely saved).
+      // On real errors, revert.
+      if (e is DioException &&
+          (e.type == DioExceptionType.receiveTimeout ||
+           e.type == DioExceptionType.connectionTimeout ||
+           e.type == DioExceptionType.sendTimeout)) {
+        return; // Keep optimistic UI
+      }
+      if (mounted) setState(() => _currentStatus = oldStatus);
+    }
   }
 
   void _sharePost() {

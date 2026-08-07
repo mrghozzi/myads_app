@@ -2,6 +2,19 @@
 
 ---
 
+## v1.7.0+12
+> **Reaction Timeout Resilience & Backend Alignment** — Robust reaction toggling timeout resilience, 15-second response window, fallback handling on network latency, alignment of valid reaction parameters (`funny`), and full optimistic UI state persistence.
+
+### Bug Fixes & Resilience
+* **Reaction Timeout Resilience & Optimistic UI Persistence (`ReactionService` & `post_details_screen.dart`)**:
+  - Enhanced `ReactionService.toggleReaction()` with custom 15-second `sendTimeout` and `receiveTimeout` via Dio `Options`.
+  - Added smart timeout handling: on request timeout (`DioExceptionType.receiveTimeout`/`connectionTimeout`), the service returns `true` to keep the optimistic UI state intact instead of reverting, matching backend email deferral behavior.
+  - Implemented optimistic UI toggling in `post_details_screen.dart` (`_toggleLike()`), ensuring instant feedback on tap and graceful error recovery.
+* **Backend Parameter Alignment (`post_card.dart` & `clips_screen.dart`)**:
+  - Replaced invalid `'haha'` reaction type identifier with `'funny'` across reaction menus, icon mapping, and color mapping in `post_card.dart` and `clips_screen.dart`, aligning strictly with backend `ALLOWED_REACTIONS` (`like`, `love`, `dislike`, `happy`, `funny`, `wow`, `angry`, `sad`) and resolving HTTP 400 rejection errors.
+
+---
+
 ## v1.6.0+11
 > **YouTube-Style Video Watch Screen & Mobile API Parity** — Dedicated YouTube-style video watch experience, ambient dark design, publisher hexagon avatar integration, video title & cover thumbnail composer fields, and suggested videos feed.
 

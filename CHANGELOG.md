@@ -1,8 +1,18 @@
 # MYADS Mobile App — Changelog
 
+## v1.7.1+13
+> **Sanctum Multi-Device Session Control & Backend Parity** — Multi-device API token session management, active Sanctum device token listing, remote device token revocation, and dual-tab session control UI.
+
+### Features & Security
+* **Sanctum Multi-Device Session Control (`sessions_settings_screen.dart`)**:
+  - Upgraded `SessionsSettingsScreen` with a dual-tab layout separating **API Devices** (Sanctum Tokens) and **Web Sessions**.
+  - Integrated active device API tokens display (`res.data['sanctum_tokens']`) showing device token names and last used timestamps.
+  - Added 1-tap remote device token revocation endpoint integration (`POST /api/settings/tokens/{id}/revoke`).
+
 ---
 
 ## v1.7.0+12
+
 > **Reaction Timeout Resilience & Backend Alignment** — Robust reaction toggling timeout resilience, 15-second response window, fallback handling on network latency, alignment of valid reaction parameters (`funny`), and full optimistic UI state persistence.
 
 ### Bug Fixes & Resilience

@@ -33,7 +33,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> with SingleTicker
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 6, vsync: this);
     
     // Add pagination listener for statuses
     _scrollController.addListener(() {
@@ -492,6 +492,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> with SingleTicker
                   // 7. Tabs Header
                   TabBar(
                     controller: _tabController,
+                    isScrollable: true,
+                    tabAlignment: TabAlignment.start,
                     onTap: (index) {
                       setState(() {});
                     },
@@ -503,6 +505,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> with SingleTicker
                     tabs: const [
                       Tab(text: 'Timeline'),
                       Tab(text: 'Photos'),
+                      Tab(text: 'Videos'),
+                      Tab(text: 'Audio'),
+                      Tab(text: 'Clips'),
                       Tab(text: 'About'),
                     ],
                   ),
@@ -585,6 +590,63 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> with SingleTicker
                                     },
                                   );
                                 }(),
+
+                      // VIDEOS TAB
+                      _isLoadingStatuses
+                          ? const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 40),
+                              child: Center(child: CircularProgressIndicator()),
+                            )
+                          : () {
+                              final videoStatuses = _statuses.where((s) => s.type == 'video' || s.postKind == 'video' || (s.media != null && s.media!.isVideo)).toList();
+                              if (videoStatuses.isEmpty) {
+                                return _buildEmptyState('No videos found.');
+                              }
+                              return ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: videoStatuses.length,
+                                itemBuilder: (context, index) => PostCard(status: videoStatuses[index]),
+                              );
+                            }(),
+
+                      // AUDIO TAB
+                      _isLoadingStatuses
+                          ? const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 40),
+                              child: Center(child: CircularProgressIndicator()),
+                            )
+                          : () {
+                              final audioStatuses = _statuses.where((s) => s.type == 'audio' || s.postKind == 'audio' || (s.media != null && s.media!.isAudio)).toList();
+                              if (audioStatuses.isEmpty) {
+                                return _buildEmptyState('No audio posts found.');
+                              }
+                              return ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: audioStatuses.length,
+                                itemBuilder: (context, index) => PostCard(status: audioStatuses[index]),
+                              );
+                            }(),
+
+                      // CLIPS TAB
+                      _isLoadingStatuses
+                          ? const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 40),
+                              child: Center(child: CircularProgressIndicator()),
+                            )
+                          : () {
+                              final clipStatuses = _statuses.where((s) => s.type == 'clips' || s.postKind == 'clips' || (s.media != null && s.media!.isClips)).toList();
+                              if (clipStatuses.isEmpty) {
+                                return _buildEmptyState('No clips found.');
+                              }
+                              return ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: clipStatuses.length,
+                                itemBuilder: (context, index) => PostCard(status: clipStatuses[index]),
+                              );
+                            }(),
 
                       // ABOUT TAB
                       Padding(

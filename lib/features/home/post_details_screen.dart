@@ -7,6 +7,7 @@ import '../../core/models/comment_model.dart';
 import '../../core/network/api_client.dart';
 import 'widgets/post_card.dart';
 import '../../core/widgets/hexagon_avatar.dart';
+import '../../core/widgets/formatted_content_widget.dart';
 import 'widgets/video_player_widget.dart';
 
 class PostDetailsScreen extends StatefulWidget {
@@ -381,11 +382,11 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            _currentStatus.text,
+                          FormattedContentWidget(
+                            content: _currentStatus.displayContent ?? _currentStatus.text,
+                            fontSize: 13.0,
                             maxLines: _isDescExpanded ? null : 3,
-                            overflow: _isDescExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
-                            style: const TextStyle(color: Colors.white70, fontSize: 13, height: 1.4),
+                            style: const TextStyle(color: Colors.white70),
                           ),
                           GestureDetector(
                             onTap: () => setState(() => _isDescExpanded = !_isDescExpanded),
@@ -761,10 +762,10 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                   ],
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  comment.text,
-                  style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 13),
-                  textDirection: _isArabic(comment.text) ? TextDirection.rtl : TextDirection.ltr,
+                FormattedContentWidget(
+                  content: comment.text,
+                  fontSize: 13.0,
+                  style: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
                 ),
                 const SizedBox(height: 4),
                 Text(

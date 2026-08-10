@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import '../../core/widgets/formatted_content_widget.dart';
 import 'store_provider.dart';
 
 class StoreProductDetailScreen extends ConsumerWidget {
@@ -65,7 +65,7 @@ class StoreProductDetailScreen extends ConsumerWidget {
                       const SizedBox(height: 8),
                       // Normally description is HTML, for now we will assume text or use flutter_html later.
                       // Since requirements asked for Markdown for wiki, we render Markdown where possible.
-                      MarkdownBody(data: product['description'] ?? 'No description provided.'),
+                      FormattedContentWidget(content: product['description'] ?? 'No description provided.'),
                       const SizedBox(height: 32),
                       
                       // Knowledgebase Section
@@ -125,7 +125,7 @@ class StoreProductDetailScreen extends ConsumerWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(16.0),
-                        child: MarkdownBody(data: article['content'] ?? ''),
+                        child: FormattedContentWidget(content: article['content'] ?? ''),
                       ),
                     ],
                   ),

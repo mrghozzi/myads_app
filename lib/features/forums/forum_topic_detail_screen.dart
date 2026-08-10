@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import '../../core/widgets/formatted_content_widget.dart';
 import 'forums_provider.dart';
 
 class ForumTopicDetailScreen extends ConsumerWidget {
@@ -58,7 +58,7 @@ class ForumTopicDetailScreen extends ConsumerWidget {
                               ],
                             ),
                             const Divider(height: 24),
-                            MarkdownBody(data: topic['content']),
+                            FormattedContentWidget(content: topic['content'] ?? ''),
                           ],
                         ),
                       ),
@@ -93,7 +93,7 @@ class ForumTopicDetailScreen extends ConsumerWidget {
                                 ],
                               ),
                               const SizedBox(height: 8),
-                              MarkdownBody(data: reply['content']),
+                              FormattedContentWidget(content: reply['content'] ?? ''),
                             ],
                           ),
                         ),

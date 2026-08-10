@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../core/models/status_model.dart';
@@ -10,6 +9,7 @@ import 'audio_player_widget.dart';
 import 'file_download_widget.dart';
 import 'activity_card_widget.dart';
 import '../../../core/widgets/hexagon_avatar.dart';
+import '../../../core/widgets/formatted_content_widget.dart';
 
 class PostCard extends ConsumerStatefulWidget {
   final StatusModel status;
@@ -238,19 +238,9 @@ class _PostCardState extends ConsumerState<PostCard> {
                 if (displayContent.isNotEmpty) ...[
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                    child: Directionality(
-                      textDirection: _isArabic(displayContent) ? TextDirection.rtl : TextDirection.ltr,
-                      child: Html(
-                        data: _sanitizeHtml(displayContent),
-                        style: {
-                          "body": Style(
-                            margin: Margins.zero,
-                            padding: HtmlPaddings.zero,
-                            fontSize: FontSize(16.0),
-                            lineHeight: LineHeight(1.5),
-                          ),
-                        },
-                      ),
+                    child: FormattedContentWidget(
+                      content: displayContent,
+                      fontSize: 16.0,
                     ),
                   ),
                 ],
@@ -472,19 +462,9 @@ class _PostCardState extends ConsumerState<PostCard> {
           if (originalContent.isNotEmpty) ...[
             Padding(
               padding: const EdgeInsets.only(top: 8),
-              child: Directionality(
-                textDirection: _isArabic(originalContent) ? TextDirection.rtl : TextDirection.ltr,
-                child: Html(
-                  data: _sanitizeHtml(originalContent),
-                  style: {
-                    "body": Style(
-                      margin: Margins.zero,
-                      padding: HtmlPaddings.zero,
-                      fontSize: FontSize(14.0),
-                      lineHeight: LineHeight(1.4),
-                    ),
-                  },
-                ),
+              child: FormattedContentWidget(
+                content: originalContent,
+                fontSize: 14.0,
               ),
             ),
           ],
@@ -742,16 +722,6 @@ class _PostCardState extends ConsumerState<PostCard> {
 
   bool _isArabic(String text) {
     return RegExp(r'[\u0600-\u06FF]').hasMatch(text);
-  }
-
-  /// Security: Strip dangerous HTML tags that could be used for phishing or XSS.
-  static final _dangerousTagPattern = RegExp(
-    r'</?(?:script|iframe|object|embed|form|input|textarea|select|button|meta|link|base)\b[^>]*>',
-    caseSensitive: false,
-  );
-
-  String _sanitizeHtml(String html) {
-    return html.replaceAll(_dangerousTagPattern, '');
   }
 }
 

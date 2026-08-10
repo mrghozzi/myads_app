@@ -373,6 +373,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Spread'**
   String get spread;
+
+  /// No description provided for @originalAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Original Audio'**
+  String get originalAudio;
+
+  /// No description provided for @returnToMainPlayer.
+  ///
+  /// In en, this message translates to:
+  /// **'Return to Main Player'**
+  String get returnToMainPlayer;
 }
 
 class _AppLocalizationsDelegate

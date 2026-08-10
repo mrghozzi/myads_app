@@ -266,7 +266,7 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                 children: [
                   // TITLE
                   Text(
-                    _currentStatus.videoTitle ?? _currentStatus.displayTitle ?? _currentStatus.text,
+                    _currentStatus.videoTitle ?? _currentStatus.displayTitle ?? _currentStatus.activityCard?.title ?? _currentStatus.text,
                     style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold, height: 1.35),
                   ),
                   const SizedBox(height: 6),
@@ -371,8 +371,8 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
 
                   const SizedBox(height: 16),
 
-                  // EXPANDABLE DESCRIPTION
-                  if (_currentStatus.text.isNotEmpty)
+                  // EXPANDABLE DESCRIPTION / ARTICLE CONTENT
+                  if ((_currentStatus.displayContent ?? _currentStatus.text).isNotEmpty)
                     Container(
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
@@ -384,8 +384,8 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                         children: [
                           FormattedContentWidget(
                             content: _currentStatus.displayContent ?? _currentStatus.text,
-                            fontSize: 13.0,
-                            maxLines: _isDescExpanded ? null : 3,
+                            fontSize: 14.0,
+                            maxLines: _isDescExpanded ? null : 6,
                             style: const TextStyle(color: Colors.white70),
                           ),
                           GestureDetector(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../core/models/activity_card_model.dart';
+import '../../../core/utils/url_helper.dart';
+import '../../../core/utils/safe_url_launcher.dart';
 
 /// Rich activity card widget for Store, Directory, Knowledgebase, and Order posts.
 /// Designed to match the web-side activity card appearance within Flutter's design system.
@@ -599,10 +600,8 @@ class _CtaButton extends StatelessWidget {
 
   Future<void> _openUrl() async {
     if (url == null || url!.isEmpty) return;
-    final uri = Uri.tryParse(url!);
-    if (uri != null && await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
+    final normalizedUrl = UrlHelper.normalizeUrl(url!);
+    SafeUrlLauncher.launch(normalizedUrl);
   }
 
   @override

@@ -145,4 +145,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get spread => 'Spread';
+
+  @override
+  String get originalAudio => 'Original Audio';
+
+  @override
+  String get returnToMainPlayer => 'Return to Main Player';
 }

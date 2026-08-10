@@ -145,4 +145,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get spread => 'انشر';
+
+  @override
+  String get originalAudio => 'الصوت الأصلي';
+
+  @override
+  String get returnToMainPlayer => 'العودة للمشغل الرئيسي';
 }

@@ -1,6 +1,6 @@
 # MYADS Mobile App
 
-> **Version:** 1.7.0+12 | **Platform:** Android | **Framework:** Flutter 3.27+ / Dart
+> **Version:** 1.7.2+14 | **Platform:** Android | **Framework:** Flutter 3.27+ / Dart
 
 The official first-party mobile client for the [MYADS](https://github.com/mrghozzi/myads) social network and ad exchange platform. Built with Flutter and powered by the MYADS Laravel REST API (Sanctum).
 
@@ -19,9 +19,10 @@ The official first-party mobile client for the [MYADS](https://github.com/mrghoz
 - **Infinite Scroll Pagination:** Automatically fetches and appends the next pages as the user scrolls near the bottom of the feed.
 - **Pulsing Skeleton Loaders:** High-fidelity, pulsing `PostSkeleton` widgets render during the initial load and paginated fetches, dynamically adapting to light and dark themes.
 - **Multimedia Support:** View all post types: text, images, video, audio, music, clips, and file attachments.
+- **Rich Content & BBCode/Markdown Formatting:** Powered by `FormattedContentWidget`, post content seamlessly parses and renders Markdown (`.md`), BBCode tags (`[b]`, `[i]`, `[url]`, `[quote]`, `[code]`, etc.), HTML, and plain text with heading styles, list bullets, code blocks, quote borders, RTL alignment, and safe URL launching.
 - **Quote Reposts (Shares):** Renders a beautifully nested original post card inline when a post is a share/repost, showing original creator info (avatar, name, verified status), text, and original media elements/players recursively.
 - **Optimistic UI Reactions:** Instant (< 1ms feel) visual feedback when reacting via emoji reactions (Like 👍, Love ❤️, Haha 😂, Wow 😮, Sad 😢, Angry 😡) with long-press picker, atomic backend syncing, gamification points, and automatic rollback on network failure.
-- **Comments:** Comment on posts using the inline composer.
+- **Comments:** Comment on posts using the inline composer with rich markdown & BBCode formatting.
 - **Sharing:** Share posts via the native share sheet.
 
 ### Publishing & Content Creation

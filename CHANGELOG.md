@@ -1,5 +1,18 @@
 # MYADS Mobile App — Changelog
 
+## v1.7.2+14
+> **Rich Markdown & BBCode Post Formatting Engine** — Universal content renderer (`FormattedContentWidget`) supporting Markdown (`.md`), BBCode formatting (`[b]`, `[i]`, `[url]`, `[quote]`, `[code]`, etc.), HTML, and plain text with theme styling, link tapping protection via `SafeUrlLauncher`, and auto RTL directionality.
+
+### Features & Rich Content Formatting
+* **Universal Markdown (.md) & BBCode Rendering Engine (`FormattedContentWidget`)**:
+  - Implemented `FormattedContentWidget` (`formatted_content_widget.dart`) to intelligently detect and render Markdown (`.md`), BBCode, HTML, and plain text across community feed posts, quoted reposts, post descriptions, comments, forum topics/replies, and store wiki articles.
+  - Added robust BBCode pre-processing converter (`convertBbcodeToMarkdown`) supporting `[b]`, `[i]`, `[u]`, `[s]`/`[strike]`, `[url=...]`, `[email=...]`, `[img]`, `[quote=...]`, `[code=...]`, `[list]`, `[list=1]`, `[color=...]`, and `[youtube]` tags.
+  - Integrated `MarkdownStyleSheet` with dynamic theme awareness, proper heading hierarchies (H1–H4), blockquote borders, code block styling, and primary theme colors for links (`a:`).
+  - Wired `SafeUrlLauncher.launch` across all markdown and HTML links for safe external URL handling.
+  - Added automatic Arabic text detection and RTL layout alignment (`Directionality`).
+
+---
+
 ## v1.7.1+13
 > **Sanctum Multi-Device Session Control & Backend Parity** — Multi-device API token session management, active Sanctum device token listing, remote device token revocation, and dual-tab session control UI.
 

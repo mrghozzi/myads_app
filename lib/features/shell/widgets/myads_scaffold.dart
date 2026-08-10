@@ -28,6 +28,11 @@ class MyAdsScaffold extends ConsumerWidget {
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         actions: [
           IconButton(
+            icon: const Icon(Icons.ondemand_video_rounded, color: Colors.redAccent),
+            tooltip: 'Video Hub',
+            onPressed: () => context.push('/video'),
+          ),
+          IconButton(
             icon: const Icon(Icons.notifications_none),
             onPressed: () => context.push('/notifications'),
           ),

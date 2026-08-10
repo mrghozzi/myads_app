@@ -211,6 +211,13 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> with SingleTicker
           childAspectRatio: 0.85,
           children: [
             _buildActionCard(
+              title: 'Video Hub',
+              subtitle: 'Watch & Discover',
+              icon: Icons.ondemand_video_rounded,
+              gradient: const LinearGradient(colors: [Color(0xFFEF4444), Color(0xFFB91C1C)]),
+              onTap: () => context.push('/video'),
+            ),
+            _buildActionCard(
               title: 'Marketplace',
               subtitle: 'Digital Products',
               icon: Icons.shopping_bag_rounded,
@@ -219,24 +226,17 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> with SingleTicker
             ),
             _buildActionCard(
               title: 'Forums',
-              subtitle: 'Community Discussions',
+              subtitle: 'Discussions',
               icon: Icons.forum_rounded,
               gradient: const LinearGradient(colors: [Color(0xFFA78BFA), Color(0xFF7C3AED)]),
               onTap: () => context.push('/forums'),
-            ),
-            _buildActionCard(
-              title: 'News',
-              subtitle: 'Latest Updates',
-              icon: Icons.article_rounded,
-              gradient: const LinearGradient(colors: [Color(0xFFFBBF24), Color(0xFFD97706)]),
-              onTap: () {}, // TODO: Navigate to News
             ),
             _buildActionCard(
               title: 'Quests',
               subtitle: 'Earn Rewards',
               icon: Icons.military_tech_rounded,
               gradient: const LinearGradient(colors: [Color(0xFF34D399), Color(0xFF059669)]),
-              onTap: () {}, // TODO: Navigate to Quests
+              onTap: () => context.push('/quests'),
             ),
           ],
         ),

@@ -6,6 +6,7 @@ import '../../features/home/post_details_screen.dart';
 import '../../features/splash/splash_screen.dart';
 import '../../features/shell/main_shell_screen.dart';
 import '../../features/clips/clips_screen.dart';
+import '../../features/video/video_hub_screen.dart';
 import '../../features/explore/explore_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../../features/posts/composer_screen.dart';
@@ -57,6 +58,10 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/home',
           builder: (context, state) => const HomeScreen(),
+        ),
+        GoRoute(
+          path: '/video',
+          builder: (context, state) => const VideoHubScreen(),
         ),
         GoRoute(
           path: '/clips',

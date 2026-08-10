@@ -1,6 +1,6 @@
 # MYADS Mobile App
 
-> **Version:** 1.7.4+16 | **Platform:** Android | **Framework:** Flutter 3.27+ / Dart
+> **Version:** 1.7.5+17 | **Platform:** Android | **Framework:** Flutter 3.27+ / Dart
 
 The official first-party mobile client for the [MYADS](https://github.com/mrghozzi/myads) social network and ad exchange platform. Built with Flutter and powered by the MYADS Laravel REST API (Sanctum).
 
@@ -14,26 +14,10 @@ The official first-party mobile client for the [MYADS](https://github.com/mrghoz
 - **Tap-to-Scroll-to-Top:** Re-selecting the Home navigation tab while already viewing the home screen smoothly scrolls the feed back to the top.
 - **Localization:** Native support for English and Arabic. The app automatically adapts to RTL layouts and injects `Accept-Language` headers for localized server responses.
 
-### Community Feed
-- **Smart Feed:** Browse the community feed with pull-to-refresh functionality and smart ranking.
-- **Infinite Scroll Pagination:** Automatically fetches and appends the next pages as the user scrolls near the bottom of the feed.
-- **Pulsing Skeleton Loaders:** High-fidelity, pulsing `PostSkeleton` widgets render during the initial load and paginated fetches, dynamically adapting to light and dark themes.
-- **Multimedia Support:** View all post types: text, images, video, audio, music, clips, and file attachments.
-- **Rich Content & BBCode/Markdown Formatting:** Powered by `FormattedContentWidget`, post content seamlessly parses and renders Markdown (`.md`), BBCode tags (`[b]`, `[i]`, `[url]`, `[quote]`, `[code]`, etc.), HTML, and plain text with heading styles, list bullets, code blocks, quote borders, RTL alignment, and safe URL launching.
-- **Quote Reposts (Shares):** Renders a beautifully nested original post card inline when a post is a share/repost, showing original creator info (avatar, name, verified status), text, and original media elements/players recursively.
-- **Optimistic UI Reactions:** Instant (< 1ms feel) visual feedback when reacting via emoji reactions (Like 👍, Love ❤️, Haha 😂, Wow 😮, Sad 😢, Angry 😡) with long-press picker, atomic backend syncing, gamification points, and automatic rollback on network failure.
-- **Comments:** Comment on posts using the inline composer with rich markdown & BBCode formatting.
-- **Sharing:** Share posts via the native share sheet.
-
-### Publishing & Content Creation
-- **Web Composer Parity & .superdesign:** Fully overhauled post composer adhering to `.superdesign` styling, featuring 9 post kinds (`text`, `gallery`, `video`, `audio`, `music`, `file`, `clips`, `link`, `repost`).
-- **Live Link Previews:** Real-time URL auto-detection and API preview fetching (`/api/v1/statuses/link-preview`), rendering domain, image thumbnail, title, and description cards.
-- **Directory Publishing Mode:** Seamless toggle between "Publish as Post" (`publish_mode: post`) and "Save to Web Directory" (`publish_mode: directory_only`) with site name, category dropdown, and tags.
-- **Member Identity & Group Context:** Header with member `HexagonAvatar`, username, and target destination selector (Public Community Feed vs User Groups).
-- **Quote Repost Card:** Inline quoted status card preview with cancel affordance when reposting content.
-- **External Share Route & Intents:** Dedicated `/share` route and query parameter extraction (`text`, `url`, `group_id`, `repost_status_id`) supporting Android share intent pre-filling.
-- **Promoted Posts (Ads):** Integrated rendering of Promoted Posts injected natively into the community feed with a prominent "Promoted" badge.
-- **SafeArea Support:** Global protection to prevent UI elements from overlapping with Android system navigation gestures.
+### Video Hub & Video Parity
+- **Dedicated Video Hub Screen (`/video`):** Full mobile parity with the web Video Hub, featuring Glassmorphic Hero Header with search bar, Category Filter Pills (`All`, `Videos`, `Shorts Clips`, `Trending`, `Latest`), 16:9 Spotlight Hero Video Card, horizontal YouTube Shorts Clips shelf, and responsive 16:9 Video Grid.
+- **1-Tap Accessibility:** Fast navigation access via a dedicated Video Hub action button (`ondemand_video_rounded`) in `MyAdsScaffold` app bar and a prominent YouTube-styled action card in `ExploreScreen` Discover section.
+- **Strict Video Content Isolation:** Powered by `/api/video/feed` (`VideoApiController.php`), enforcing strict `s_type` scoping (`whereIn('s_type', [10, 2, 4, 100])` for main videos and `14` for clips) to guarantee non-video items (directory listings `s_type = 1`, store products `s_type = 7867`, news, etc.) are excluded.
 
 ### Clips System
 - **Short-form Video:** Native vertical-swipe, short-form video experience.

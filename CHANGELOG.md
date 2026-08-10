@@ -1,5 +1,25 @@
 # MYADS Mobile App — Changelog
 
+## v1.7.5+17
+> **Video Hub Screen, Video Feed Content Isolation & Mobile Accessibility** — Full mobile app parity with web Video Hub (`/video`), featuring dedicated `VideoHubScreen` with category filter pills, Spotlight video banner, YouTube Shorts shelf, responsive video grid, 1-tap header & explore navigation shortcuts, and backend API video content isolation excluding non-video posts.
+
+### Features & Mobile Video Hub Parity
+* **Video Hub Screen (`video_hub_screen.dart` & `video_hub_provider.dart`)**:
+  - Created a dedicated `VideoHubScreen` matching web `/video` aesthetics, featuring Glassmorphic Hero Header, debounced search bar, and 1-tap video composer button (`/compose`).
+  - Added scrollable Category Filter Pills (`All`, `Videos`, `Shorts Clips`, `Trending`, `Latest`) with dynamic active gradient styling.
+  - Rendered 16:9 Spotlight Hero Video Card with play button, category badge, and channel metadata when viewing top trending/all feeds.
+  - Integrated horizontal YouTube Shorts Clips shelf (`clips_shelf`) with vertical 9:16 cards, view counts, clip badges, and publisher avatars.
+  - Built responsive 16:9 Video Grid displaying video title, channel name, verified badge, hexagon avatar, view count, and tap-to-play navigation to `PostDetailsScreen`.
+* **Mobile Navigation Accessibility (`MyAdsScaffold` & `ExploreScreen`)**:
+  - Added a 1-tap **Video Hub icon button** (`ondemand_video_rounded`) in `MyAdsScaffold` app bar header next to notifications and messages.
+  - Added a prominent **"Video Hub"** action card with red YouTube gradient and video camera icon in `ExploreScreen` Discover section.
+* **Strict Video Content Isolation (`VideoApiController.php` & `VideoApiTest.php`)**:
+  - Created `App\Http\Controllers\Api\VideoApiController.php` providing `GET /api/video/feed`.
+  - Applied strict `s_type` scoping (`whereIn('s_type', [10, 2, 4, 100])` for main videos and `s_type = 14` for clips), completely excluding web directory listings (`s_type = 1`), store products (`s_type = 7867`), news, order requests, and KB items.
+  - Added automated feature test suite `VideoApiTest.php` (passed 100%).
+
+---
+
 ## v1.7.4+16
 > **Store Products Chronological Ordering & Sale Discount Pricing** — Aligned Store product listings with web-side chronological ordering (status promotion date `s_type = 7867`, `updated_at`, `id DESC`), added full discount pricing attributes (`original_price`, `sale_price`, `current_price`, `is_on_sale`) to API resources, and rendered red "خصم" badges and strikethrough prices in Flutter Store screens.
 

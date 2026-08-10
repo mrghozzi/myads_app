@@ -1,5 +1,19 @@
 # MYADS Mobile App — Changelog
 
+## v1.7.4+16
+> **Store Products Chronological Ordering & Sale Discount Pricing** — Aligned Store product listings with web-side chronological ordering (status promotion date `s_type = 7867`, `updated_at`, `id DESC`), added full discount pricing attributes (`original_price`, `sale_price`, `current_price`, `is_on_sale`) to API resources, and rendered red "خصم" badges and strikethrough prices in Flutter Store screens.
+
+### Features & Marketplace Parity
+* **Store Chronological Ordering (`StoreApiController.php`)**:
+  - Aligned store API product sorting with the web store controller: ordered by status promotion date (`s_type = 7867`), then `updated_at` (last modification date), then `id` DESC.
+* **Product Sale & Discount Price Hydration (`ProductResource.php`)**:
+  - Expanded `ProductResource.php` to include `original_price`, `sale_price`, `current_price`, `is_on_sale` boolean, and formatted timestamps (`updated_at`, `date_formatted`).
+* **UI Discount Badging & Strikethrough Pricing (`StoreProductsScreen` & `StoreProductDetailScreen`)**:
+  - Added a red "خصم" pill badge on store product thumbnails for active sales.
+  - Rendered discounted price in bold accent color alongside strikethrough original price (`TextDecoration.lineThrough`) across product grid cards and detail screens.
+
+---
+
 ## v1.7.3+15
 > **Knowledgebase Activity Cards & Eager-Loading Isolation Fix** — Resolved Knowledgebase (`/kb` — `s_type = 205`) relation resolution collision, hydrated article body text (`o_valuer`) in API resources, suppressed duplicate title headers above rich activity cards, and integrated safe URL normalization across all activity card CTA buttons.
 
@@ -10,9 +24,10 @@
 * **Knowledgebase Article Content Hydration (`StatusResource.php`)**:
   - Updated `getDisplayContent()` in `StatusResource.php` to hydrate `$content->o_valuer` for Knowledgebase `Option` models, returning the complete formatted article body instead of empty strings.
   - Suppressed redundant `display_title` headers for rich activity card post types (`205`, `7867`, `1`, `6`), ensuring clean single-card title rendering matching the web UI.
-* **Activity Card URL Normalization & Detailed Article View (`activity_card_widget.dart` & `post_details_screen.dart`)**:
-  - Integrated `UrlHelper.normalizeUrl()` and `SafeUrlLauncher.launch()` in `ActivityCardWidget` `_CtaButton`, enabling reliable preview link opening across local and remote device network environments.
-  - Updated `post_details_screen.dart` expandable content section to check `(_currentStatus.displayContent ?? _currentStatus.text).isNotEmpty`, rendering full KB article bodies with `FormattedContentWidget`.
+* **Store Products Chronological Ordering & Discount Pricing (`StoreApiController.php` & `ProductResource.php`)**:
+  - Updated `StoreApiController.php` to order products chronologically by status promotion date (`s_type = 7867`), then `updated_at` (last modified date), then `id` DESC, matching the web store sorting logic.
+  - Expanded `ProductResource.php` to return complete pricing attributes: `original_price`, `sale_price`, `current_price`, `is_on_sale`, and formatted relative dates.
+  - Enhanced Flutter `StoreProductsScreen` and `StoreProductDetailScreen` to render red "خصم" badges for active sales, displaying discounted prices alongside strikethrough original prices.
 
 ---
 

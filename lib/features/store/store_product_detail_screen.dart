@@ -23,6 +23,11 @@ class StoreProductDetailScreen extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(child: Text('Error: $err', style: const TextStyle(color: Colors.red))),
         data: (product) {
+          final bool isOnSale = product['is_on_sale'] == true ||
+              (product['sale_price'] != null && (product['sale_price'] as num) < (product['original_price'] ?? product['price'] ?? 0));
+          final num currentPrice = product['current_price'] ?? product['sale_price'] ?? product['price'] ?? 0;
+          final num originalPrice = product['original_price'] ?? product['price'] ?? 0;
+
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -48,12 +53,34 @@ class StoreProductDetailScreen extends ConsumerWidget {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF615dfa).withValues(alpha: 0.1),
+                              color: isOnSale ? Colors.redAccent.withValues(alpha: 0.15) : const Color(0xFF615dfa).withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(20),
+                              border: isOnSale ? Border.all(color: Colors.redAccent.withValues(alpha: 0.3)) : null,
                             ),
-                            child: Text(
-                              '${product['price'] ?? 0} PTS',
-                              style: const TextStyle(color: Color(0xFF615dfa), fontWeight: FontWeight.bold),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (isOnSale) ...[
+                                  const Text(
+                                    'خصم  ',
+                                    style: TextStyle(color: Colors.redAccent, fontSize: 11, fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    '$currentPrice PTS',
+                                    style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 15),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    '$originalPrice PTS',
+                                    style: const TextStyle(color: Colors.grey, fontSize: 12, decoration: TextDecoration.lineThrough),
+                                  ),
+                                ] else ...[
+                                  Text(
+                                    '$currentPrice PTS',
+                                    style: const TextStyle(color: Color(0xFF615dfa), fontWeight: FontWeight.bold, fontSize: 15),
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
                         ],

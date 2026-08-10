@@ -44,6 +44,11 @@ class StoreProductsScreen extends ConsumerWidget {
   }
 
   Widget _buildProductCard(BuildContext context, Map<String, dynamic> product, bool isDark) {
+    final bool isOnSale = product['is_on_sale'] == true ||
+        (product['sale_price'] != null && (product['sale_price'] as num) < (product['original_price'] ?? product['price'] ?? 0));
+    final num currentPrice = product['current_price'] ?? product['sale_price'] ?? product['price'] ?? 0;
+    final num originalPrice = product['original_price'] ?? product['price'] ?? 0;
+
     return GestureDetector(
       onTap: () {
         context.push('/store/products/${product['id']}');
@@ -57,12 +62,37 @@ class StoreProductsScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              child: product['thumbnail'] != null
-                  ? Image.network(product['thumbnail'], fit: BoxFit.cover)
-                  : Container(
-                      color: Colors.grey[800],
-                      child: const Icon(Icons.shopping_bag, size: 50, color: Colors.white54),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  product['thumbnail'] != null
+                      ? Image.network(product['thumbnail'], fit: BoxFit.cover)
+                      : Container(
+                          color: Colors.grey[800],
+                          child: const Icon(Icons.shopping_bag, size: 50, color: Colors.white54),
+                        ),
+                  if (isOnSale)
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.redAccent,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Text(
+                          'خصم',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
+                ],
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(12.0),
@@ -76,14 +106,27 @@ class StoreProductsScreen extends ConsumerWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 6,
                     children: [
                       Text(
-                        '${product['price'] ?? 0} PTS',
-                        style: const TextStyle(color: Color(0xFF615dfa), fontWeight: FontWeight.bold),
+                        '$currentPrice PTS',
+                        style: TextStyle(
+                          color: isOnSale ? Colors.redAccent : const Color(0xFF615dfa),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
                       ),
-                      const Icon(Icons.star, color: Colors.amber, size: 16),
+                      if (isOnSale)
+                        Text(
+                          '$originalPrice PTS',
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 11,
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ),
                     ],
                   ),
                 ],

@@ -128,13 +128,13 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
   }
 
   Future<void> _toggleFollow() async {
-    final targetId = _currentStatus.user.id;
-    if (targetId == 0) return;
+    final user = _currentStatus.user;
+    if (!user.isValid) return;
 
     setState(() => _isFollowing = !_isFollowing);
 
     try {
-      await ApiClient.instance.post('/profile/$targetId/follow');
+      await ApiClient.instance.post('/profile/${user.username}/follow');
     } catch (_) {
       if (mounted) setState(() => _isFollowing = !_isFollowing);
     }
@@ -513,7 +513,7 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                 else
                   ..._comments.map((comment) => ListTile(
                         leading: GestureDetector(
-                          onTap: comment.user == null || comment.user!.username == 'unknown' || comment.user!.id == 0 || comment.user!.username.isEmpty
+                          onTap: comment.user == null || !(comment.user!.isValid)
                               ? null
                               : () {
                                   context.push('/user-profile?username=${Uri.encodeComponent(comment.user!.username)}');
@@ -527,7 +527,7 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                           ),
                         ),
                         title: GestureDetector(
-                          onTap: comment.user == null || comment.user!.username == 'unknown' || comment.user!.id == 0 || comment.user!.username.isEmpty
+                          onTap: comment.user == null || !(comment.user!.isValid)
                               ? null
                               : () {
                                   context.push('/user-profile?username=${Uri.encodeComponent(comment.user!.username)}');

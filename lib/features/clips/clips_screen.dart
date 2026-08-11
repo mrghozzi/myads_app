@@ -365,7 +365,7 @@ class _ReelItemState extends State<_ReelItem> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   GestureDetector(
-                    onTap: widget.status.user.username == 'unknown' || widget.status.user.id == 0 || widget.status.user.username.isEmpty
+                    onTap: !widget.status.user.isValid
                         ? null
                         : () {
                             context.push('/user-profile?username=${Uri.encodeComponent(widget.status.user.username)}');

@@ -380,7 +380,7 @@ class _PostCardState extends ConsumerState<PostCard> {
           Row(
             children: [
               GestureDetector(
-                onTap: original.user.username == 'unknown' || original.user.id == 0 || original.user.username.isEmpty
+                onTap: !original.user.isValid
                     ? null
                     : () {
                         context.push('/user-profile?username=${Uri.encodeComponent(original.user.username)}');
@@ -397,7 +397,7 @@ class _PostCardState extends ConsumerState<PostCard> {
               const SizedBox(width: 10),
               Expanded(
                 child: GestureDetector(
-                  onTap: original.user.username == 'unknown' || original.user.id == 0 || original.user.username.isEmpty
+                  onTap: !original.user.isValid
                       ? null
                       : () {
                           context.push('/user-profile?username=${Uri.encodeComponent(original.user.username)}');
@@ -587,7 +587,7 @@ class _PostCardState extends ConsumerState<PostCard> {
     return Row(
       children: [
         GestureDetector(
-          onTap: widget.status.user.username == 'unknown' || widget.status.user.id == 0 || widget.status.user.username.isEmpty
+          onTap: !widget.status.user.isValid
               ? null
               : () {
                   context.push('/user-profile?username=${Uri.encodeComponent(widget.status.user.username)}');
@@ -604,7 +604,7 @@ class _PostCardState extends ConsumerState<PostCard> {
         const SizedBox(width: 12),
         Expanded(
           child: GestureDetector(
-            onTap: widget.status.user.username == 'unknown' || widget.status.user.id == 0 || widget.status.user.username.isEmpty
+            onTap: !widget.status.user.isValid
                 ? null
                 : () {
                     context.push('/user-profile?username=${Uri.encodeComponent(widget.status.user.username)}');

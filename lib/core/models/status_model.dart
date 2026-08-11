@@ -197,7 +197,7 @@ class StatusModel {
       type: json['type']?.toString() ?? 'text',
       postKind: json['post_kind']?.toString() ?? 'text',
       createdAt: json['date_formatted']?.toString() ?? json['created_at_human']?.toString() ?? json['created_at']?.toString() ?? '',
-      user: json['user'] != null ? UserModel.fromJson(json['user']) : UserModel(id: 0, username: 'unknown', name: '', avatarUrl: '', profileBadgeColor: '', isVerified: false),
+      user: json['user'] != null ? UserModel.fromJson(json['user']) : UserModel(id: '0', username: 'unknown', name: '', avatarUrl: '', profileBadgeColor: '', isVerified: false),
       likesCount: json['reactions_count'] is int ? json['reactions_count'] : int.tryParse(json['reactions_count']?.toString() ?? '0') ?? 0,
       commentsCount: json['comments_count'] is int ? json['comments_count'] : int.tryParse(json['comments_count']?.toString() ?? '0') ?? 0,
       repostsCount: json['reposts_count'] is int ? json['reposts_count'] : int.tryParse(json['reposts_count']?.toString() ?? '0') ?? 0,
@@ -250,7 +250,8 @@ class RepostRecordModel {
   final int id;
   final int statusId;
   final int originalStatusId;
-  final int userId;
+  /// Public user identifier — may be numeric string or public_uid.
+  final String userId;
   final StatusModel? originalStatus;
 
   RepostRecordModel({
@@ -266,7 +267,7 @@ class RepostRecordModel {
       id: json['id'] is int ? json['id'] : int.tryParse(json['id']?.toString() ?? '0') ?? 0,
       statusId: json['status_id'] is int ? json['status_id'] : int.tryParse(json['status_id']?.toString() ?? '0') ?? 0,
       originalStatusId: json['original_status_id'] is int ? json['original_status_id'] : int.tryParse(json['original_status_id']?.toString() ?? '0') ?? 0,
-      userId: json['user_id'] is int ? json['user_id'] : int.tryParse(json['user_id']?.toString() ?? '0') ?? 0,
+      userId: json['user_id']?.toString() ?? '0',
       originalStatus: json['original_status'] != null && json['original_status'] is Map
           ? StatusModel.fromJson(json['original_status'] as Map<String, dynamic>)
           : null,

@@ -1,5 +1,21 @@
 # MYADS Mobile App — Changelog
 
+## v1.7.6+18
+> **Member ID Privacy & Anti-Enumeration Support** — Full Flutter app parity with the web backend's `public_member_ids_enabled` security setting, replacing numeric database IDs with opaque public identifiers (`public_uid`) across all user models, API interactions, and navigation guards.
+
+### Security & Privacy
+* **Public User ID Model Migration (`user_model.dart` & `user_profile_model.dart`)**:
+  - Changed `UserModel.id` and `UserProfileModel.id` from `int` to `String` to accept both numeric IDs and randomized `public_uid` strings returned by the API when `public_member_ids_enabled` is active.
+  - Added `UserModel.isValid` getter encapsulating the full user validity check (`id.isNotEmpty && id != '0' && username.isNotEmpty && username != 'unknown'`), replacing scattered `user.id == 0` integer comparisons.
+* **Repost Record Privacy (`status_model.dart`)**:
+  - Changed `RepostRecordModel.userId` from `int` to `String` to match the backend's `StatusResource` which now returns `publicRouteIdentifier()` for repost authors.
+* **Follow API Route Migration (`post_details_screen.dart`)**:
+  - Migrated `_toggleFollow()` from `/profile/{numeric_id}/follow` to `/profile/{username}/follow`, aligning with the web backend's refactored follow route that accepts usernames instead of numeric IDs.
+* **User Validity Guard Consolidation (`post_card.dart`, `clips_screen.dart`, `post_details_screen.dart`)**:
+  - Replaced 7 occurrences of verbose `user.username == 'unknown' || user.id == 0 || user.username.isEmpty` checks with the concise `!user.isValid` / `!(comment.user!.isValid)` getter across post headers, repost author rows, comment user taps, and clips publisher overlays.
+
+---
+
 ## v1.7.5+17
 > **Video Hub Screen, Video Feed Content Isolation & Mobile Accessibility** — Full mobile app parity with web Video Hub (`/video`), featuring dedicated `VideoHubScreen` with category filter pills, Spotlight video banner, YouTube Shorts shelf, responsive video grid, 1-tap header & explore navigation shortcuts, and backend API video content isolation excluding non-video posts.
 

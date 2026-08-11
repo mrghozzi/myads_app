@@ -1,7 +1,9 @@
 import '../utils/url_helper.dart';
 
 class UserModel {
-  final int id;
+  /// Public identifier — may be a numeric ID string or a public_uid string,
+  /// depending on the server's `public_member_ids_enabled` setting.
+  final String id;
   final String username;
   final String name;
   final String avatarUrl;
@@ -17,9 +19,12 @@ class UserModel {
     required this.isVerified,
   });
 
+  /// Whether this user model represents a valid, identifiable user.
+  bool get isValid => id.isNotEmpty && id != '0' && username.isNotEmpty && username != 'unknown';
+
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['id'] is int ? json['id'] : int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+      id: json['id']?.toString() ?? '0',
       username: json['username']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
       avatarUrl: UrlHelper.normalizeUrl((json['avatar'] ?? json['avatar_url'])?.toString() ?? ''),

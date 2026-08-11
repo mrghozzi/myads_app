@@ -1,6 +1,6 @@
 # MYADS Mobile App
 
-> **Version:** 1.7.5+17 | **Platform:** Android | **Framework:** Flutter 3.27+ / Dart
+> **Version:** 1.7.6+18 | **Platform:** Android | **Framework:** Flutter 3.27+ / Dart
 
 The official first-party mobile client for the [MYADS](https://github.com/mrghozzi/myads) social network and ad exchange platform. Built with Flutter and powered by the MYADS Laravel REST API (Sanctum).
 
@@ -40,7 +40,8 @@ The official first-party mobile client for the [MYADS](https://github.com/mrghoz
 - **Showcase:** Earned badges showcase list and user bio/signature display.
 - **Tabbed Layout:** **Timeline** (user's post history with infinite scroll), **Photos** (filtered user posts with images in a grid layout), and **About** (comprehensive user bio, keeping user points/PTS private).
 - **Click-to-Profile Navigation:** Tap on user avatars or usernames anywhere in feed posts, comments, or clips to navigate directly to that member's profile.
-- **Profile Navigation Safeguards:** Automatically validates and disables click-to-profile navigation for deleted or unknown users (e.g., username is 'unknown' or ID is 0) to prevent routing crashes.
+- **Profile Navigation Safeguards:** Automatically validates and disables click-to-profile navigation for deleted or unknown users via the `UserModel.isValid` getter, preventing routing crashes.
+- **Member ID Privacy:** Supports the backend's `public_member_ids_enabled` setting — user `id` fields accept both numeric IDs and opaque `public_uid` strings. All API interactions (follow, block, report) use `username` instead of numeric IDs.
 
 ### Authentication & Security
 - **API Auth:** Secure login with two-layer API authentication (API key + Sanctum Bearer token).
@@ -158,11 +159,12 @@ flutter build apk --release
 
 ## API Requirements
 
-The app requires the MYADS backend API (v4.4.5+) with the following:
+The app requires the MYADS backend API (v4.5.2+) with the following:
 - Laravel Sanctum enabled
 - Admin-generated API key configured in `.env` (sent via the `X-API-KEY` header only; query parameter not accepted)
 - API rate limiting enabled: `/api/login` (5/min), `/api/register` (3/min)
 - `StatusResource` returning `repost_record`, `media`, `gallery`, and `attachments` fields
+- `UserResource` returning `publicRouteIdentifier()` when `public_member_ids_enabled` is active
 - `Api\ProfileController::statuses()` and `Api\PortalController::index()` calling `decorateMany()` for related content and repost relation hydration
 
 See `Documents/API_DOCS.md` in the main project for full endpoint documentation.
@@ -171,4 +173,4 @@ See `Documents/API_DOCS.md` in the main project for full endpoint documentation.
 
 ## License
 
-MIT — Part of the MYADS v4.4.5 project by mrghozzi.
+MIT — Part of the MYADS v4.5.2 project by mrghozzi.

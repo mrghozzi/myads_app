@@ -30,7 +30,8 @@ class SubscriptionBadgeModel {
 }
 
 class UserProfileModel {
-  final int id;
+  /// Public identifier — may be a numeric ID string or a public_uid string.
+  final String id;
   final String username;
   final String name;
   final String avatar;
@@ -94,7 +95,7 @@ class UserProfileModel {
     }
 
     return UserProfileModel(
-      id: json['id'] is int ? json['id'] : int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+      id: json['id']?.toString() ?? '0',
       username: json['username']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
       avatar: UrlHelper.normalizeUrl(json['avatar']?.toString() ?? ''),

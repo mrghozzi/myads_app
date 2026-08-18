@@ -47,5 +47,9 @@
   "editPost": "Edit Post",
   "spread": "Spread",
   "originalAudio": "Original Audio",
-  "returnToMainPlayer": "Return to Main Player"
+  "returnToMainPlayer": "Return to Main Player",
+  "seeMore": "See more",
+  "seeLess": "See less",
+  "readMore": "Read more",
+  "readLess": "Read less"
 }

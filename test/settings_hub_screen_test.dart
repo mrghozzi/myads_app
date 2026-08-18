@@ -10,7 +10,7 @@ import 'package:myads_app/core/models/user_profile_model.dart';
 void main() {
   testWidgets('SettingsHubScreen displays correctly', (WidgetTester tester) async {
     final mockProfile = UserProfileModel(
-      id: 1,
+      id: '1',
       username: 'testuser',
       name: 'Test User',
       avatar: '',
@@ -35,6 +35,7 @@ void main() {
           profileDetailProvider('me').overrideWith((ref) => mockProfile),
         ],
         child: const MaterialApp(
+          locale: Locale('en'),
           localizationsDelegates: [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
@@ -57,6 +58,6 @@ void main() {
     expect(find.text('Test User'), findsOneWidget);
     expect(find.text('@testuser'), findsOneWidget);
     expect(find.text('Edit Profile'), findsNWidgets(2)); // One in header, one in list
-    expect(find.text('Privacy'), findsOneWidget);
+    expect(find.text('Privacy Settings'), findsOneWidget);
   });
 }

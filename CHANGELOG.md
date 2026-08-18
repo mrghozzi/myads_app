@@ -1,5 +1,24 @@
 # MYADS Mobile App — Changelog
 
+## v1.7.7+19
+> **Expandable Long Posts & Multilingual "See More" Support** — Implemented intelligent truncation and smooth in-place expansion for long posts and repost embeds with localized "See more" / "See less" ("رؤية المزيد" / "رؤية أقل") toggle buttons, subtle bottom gradient fade-out, and accurate overflow detection.
+
+### Features & UI/UX Improvements
+* **Expandable Formatted Content (`formatted_content_widget.dart`)**:
+  - Enhanced `FormattedContentWidget` to support collapsible text previews (`isExpandable: true`, `collapsedMaxLines: 5`) with smooth animated height transitions (`AnimatedSize` with `Curves.easeInOutCubic`).
+  - Added bottom gradient fade-out mask (`ShaderMask`) for truncated posts when collapsed.
+  - Implemented exact overflow measurement (fast heuristic + layout/height check) so short posts never display unnecessary buttons.
+  - Wrapped constrained markdown/HTML body inside `OverflowBox` to prevent `RenderFlex` layout errors.
+* **Post Card & Repost Integration (`post_card.dart` & `post_details_screen.dart`)**:
+  - Enabled expandable post content on main feed posts while maintaining full expanded view on dedicated detail screens (`isExpandable: !widget.isDetailView`).
+  - Enabled expandable text for embedded quote reposts (`isExpandable: true`, `collapsedMaxLines: 4`).
+  - Cleaned up video description expansion in `PostDetailsScreen`.
+* **Multilingual Localization (`app_ar.arb`, `app_en.arb`, `app_localizations.dart`)**:
+  - Added localized strings for `seeMore` ("رؤية المزيد" / "See more"), `seeLess` ("رؤية أقل" / "See less"), `readMore` ("قراءة المزيد" / "Read more"), and `readLess` ("قراءة أقل" / "Read less").
+  - Automated full test coverage with 100% passing tests in `formatted_content_widget_test.dart`.
+
+---
+
 ## v1.7.6+18
 > **Member ID Privacy & Anti-Enumeration Support** — Full Flutter app parity with the web backend's `public_member_ids_enabled` security setting, replacing numeric database IDs with opaque public identifiers (`public_uid`) across all user models, API interactions, and navigation guards.
 

@@ -151,4 +151,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get returnToMainPlayer => 'Return to Main Player';
+
+  @override
+  String get seeMore => 'See more';
+
+  @override
+  String get seeLess => 'See less';
+
+  @override
+  String get readMore => 'Read more';
+
+  @override
+  String get readLess => 'Read less';
 }

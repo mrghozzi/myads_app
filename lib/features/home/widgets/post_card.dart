@@ -241,6 +241,8 @@ class _PostCardState extends ConsumerState<PostCard> {
                     child: FormattedContentWidget(
                       content: displayContent,
                       fontSize: 16.0,
+                      isExpandable: !widget.isDetailView,
+                      collapsedMaxLines: 5,
                     ),
                   ),
                 ],
@@ -465,6 +467,8 @@ class _PostCardState extends ConsumerState<PostCard> {
               child: FormattedContentWidget(
                 content: originalContent,
                 fontSize: 14.0,
+                isExpandable: true,
+                collapsedMaxLines: 4,
               ),
             ),
           ],

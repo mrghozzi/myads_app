@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:myads_app/l10n/app_localizations.dart';
 import '../utils/safe_url_launcher.dart';
 
 /// Smart text content renderer supporting BBCode, Markdown (.md), HTML, and plain text
-/// with full theme awareness, link tapping, RTL detection, and custom styling.
-class FormattedContentWidget extends StatelessWidget {
+/// with full theme awareness, link tapping, RTL detection, expandable view ("See more" / "See less"),
+/// multi-language support, and custom styling.
+class FormattedContentWidget extends StatefulWidget {
   final String content;
   final double fontSize;
   final int? maxLines;
   final TextStyle? style;
   final bool selectable;
+  final bool isExpandable;
+  final int collapsedMaxLines;
+  final bool initiallyExpanded;
+  final String? seeMoreLabel;
+  final String? seeLessLabel;
+  final bool showGradientFade;
+  final ValueChanged<bool>? onExpandToggled;
 
   const FormattedContentWidget({
     super.key,
@@ -19,6 +28,13 @@ class FormattedContentWidget extends StatelessWidget {
     this.maxLines,
     this.style,
     this.selectable = true,
+    this.isExpandable = false,
+    this.collapsedMaxLines = 5,
+    this.initiallyExpanded = false,
+    this.seeMoreLabel,
+    this.seeLessLabel,
+    this.showGradientFade = true,
+    this.onExpandToggled,
   });
 
   /// Convert BBCode tags to standard Markdown / HTML formatting
@@ -153,7 +169,7 @@ class FormattedContentWidget extends StatelessWidget {
   }
 
   /// Check if text contains Markdown syntax indicators
-  bool _isMarkdown(String text) {
+  static bool isMarkdown(String text) {
     final mdRegex = RegExp(
       r'(^|\n|\r)(#+ |[*_-]{3,}|[*+-] |\d+\. |```|> )|(\*\*|__|\*|_|~~|`|\[[^\]]+\]\([^)]+\)|!\[[^\]]*\]\([^)]+\))',
       multiLine: true,
@@ -162,7 +178,7 @@ class FormattedContentWidget extends StatelessWidget {
   }
 
   /// Check if text contains HTML tags
-  bool _isHtml(String text) {
+  static bool isHtml(String text) {
     final htmlRegex = RegExp(
       r'</?(?:p|div|span|h[1-6]|b|i|strong|em|a|ul|ol|li|br|blockquote|code|pre|img|font|u|s)\b[^>]*>',
       caseSensitive: false,
@@ -171,21 +187,21 @@ class FormattedContentWidget extends StatelessWidget {
   }
 
   /// Security: Strip dangerous HTML tags
-  static final _dangerousTagPattern = RegExp(
+  static final RegExp dangerousTagPattern = RegExp(
     r'</?(?:script|iframe|object|embed|form|input|textarea|select|button|meta|link|base)\b[^>]*>',
     caseSensitive: false,
   );
 
-  String _sanitizeHtml(String html) {
-    return html.replaceAll(_dangerousTagPattern, '');
+  static String sanitizeHtml(String html) {
+    return html.replaceAll(dangerousTagPattern, '');
   }
 
-  bool _isArabic(String text) {
+  static bool isArabic(String text) {
     return RegExp(r'[\u0600-\u06FF]').hasMatch(text);
   }
 
   /// Convert HTML tags like <br>, <p> to Markdown equivalents if content has Markdown
-  String _normalizeMarkdown(String text) {
+  static String normalizeMarkdown(String text) {
     String normalized = text;
     normalized = normalized.replaceAll(RegExp(r'<br\s*/?>', caseSensitive: false), '\n');
     normalized = normalized.replaceAll(RegExp(r'</p\s*>', caseSensitive: false), '\n\n');
@@ -194,52 +210,109 @@ class FormattedContentWidget extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (content.trim().isEmpty) return const SizedBox.shrink();
+  State<FormattedContentWidget> createState() => _FormattedContentWidgetState();
+}
 
-    // Step 1: Pre-process BBCode into Markdown/HTML
-    final processedContent = convertBbcodeToMarkdown(content);
+class _FormattedContentWidgetState extends State<FormattedContentWidget> {
+  late bool _isExpanded;
+  bool _isOverflowing = false;
+  final GlobalKey _measureKey = GlobalKey();
 
+  @override
+  void initState() {
+    super.initState();
+    _isExpanded = widget.initiallyExpanded;
+    _checkInitialOverflowHeuristic();
+    _scheduleMeasure();
+  }
+
+  @override
+  void didUpdateWidget(FormattedContentWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.content != widget.content ||
+        oldWidget.collapsedMaxLines != widget.collapsedMaxLines ||
+        oldWidget.isExpandable != widget.isExpandable) {
+      _checkInitialOverflowHeuristic();
+      _scheduleMeasure();
+    }
+  }
+
+  void _checkInitialOverflowHeuristic() {
+    if (!widget.isExpandable) {
+      _isOverflowing = false;
+      return;
+    }
+
+    final trimmed = widget.content.trim();
+    final lineCount = '\n'.allMatches(trimmed).length + 1;
+    if (lineCount > widget.collapsedMaxLines || trimmed.length > 200) {
+      _isOverflowing = true;
+    } else {
+      _isOverflowing = false;
+    }
+  }
+
+  void _scheduleMeasure() {
+    if (!widget.isExpandable) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _measureContentHeight();
+    });
+  }
+
+  void _measureContentHeight() {
+    if (!mounted || !widget.isExpandable) return;
+    final renderBox = _measureKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null && renderBox.hasSize) {
+      final totalHeight = renderBox.size.height;
+      final collapsedHeight = widget.fontSize * 1.5 * widget.collapsedMaxLines + 8.0;
+      final overflows = totalHeight > (collapsedHeight + 8.0);
+      if (overflows != _isOverflowing) {
+        setState(() {
+          _isOverflowing = overflows;
+        });
+      }
+    }
+  }
+
+  Widget _buildContent(BuildContext context, Color defaultColor, {bool forMeasurement = false}) {
+    if (widget.content.trim().isEmpty) return const SizedBox.shrink();
+
+    final processedContent = FormattedContentWidget.convertBbcodeToMarkdown(widget.content);
+    final hasMarkdown = FormattedContentWidget.isMarkdown(processedContent);
+    final hasHtml = FormattedContentWidget.isHtml(processedContent);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final defaultColor = style?.color ?? theme.textTheme.bodyMedium?.color ?? (isDark ? Colors.white : Colors.black87);
-    final textDirection = _isArabic(processedContent) ? TextDirection.rtl : TextDirection.ltr;
-
-    final hasMarkdown = _isMarkdown(processedContent);
-    final hasHtml = _isHtml(processedContent);
 
     Widget child;
 
     if (hasMarkdown || !hasHtml) {
-      // Render as Markdown (handles pure Markdown, converted BBCode, mixed Markdown, and plain text)
-      final normalizedData = _normalizeMarkdown(processedContent);
-
+      final normalizedData = FormattedContentWidget.normalizeMarkdown(processedContent);
       final styleSheet = MarkdownStyleSheet.fromTheme(theme).copyWith(
         p: TextStyle(
-          fontSize: fontSize,
+          fontSize: widget.fontSize,
           height: 1.5,
           color: defaultColor,
         ),
         h1: TextStyle(
-          fontSize: fontSize + 6,
+          fontSize: widget.fontSize + 6,
           fontWeight: FontWeight.bold,
           color: defaultColor,
           height: 1.3,
         ),
         h2: TextStyle(
-          fontSize: fontSize + 4,
+          fontSize: widget.fontSize + 4,
           fontWeight: FontWeight.bold,
           color: defaultColor,
           height: 1.3,
         ),
         h3: TextStyle(
-          fontSize: fontSize + 2,
+          fontSize: widget.fontSize + 2,
           fontWeight: FontWeight.bold,
           color: defaultColor,
           height: 1.3,
         ),
         h4: TextStyle(
-          fontSize: fontSize + 1,
+          fontSize: widget.fontSize + 1,
           fontWeight: FontWeight.bold,
           color: defaultColor,
           height: 1.3,
@@ -247,7 +320,7 @@ class FormattedContentWidget extends StatelessWidget {
         code: TextStyle(
           backgroundColor: isDark ? Colors.white12 : Colors.black.withValues(alpha: 0.06),
           fontFamily: 'monospace',
-          fontSize: fontSize - 1,
+          fontSize: widget.fontSize - 1,
           color: isDark ? const Color(0xFFFFCC80) : const Color(0xFFD84315),
         ),
         codeblockDecoration: BoxDecoration(
@@ -273,36 +346,38 @@ class FormattedContentWidget extends StatelessWidget {
         ),
         listBullet: TextStyle(
           color: theme.colorScheme.primary,
-          fontSize: fontSize,
+          fontSize: widget.fontSize,
         ),
       );
 
       child = MarkdownBody(
         data: normalizedData,
-        selectable: selectable,
+        selectable: forMeasurement ? false : widget.selectable,
         styleSheet: styleSheet,
-        onTapLink: (text, href, title) {
-          if (href != null && href.isNotEmpty) {
-            SafeUrlLauncher.launch(href);
-          }
-        },
+        onTapLink: forMeasurement
+            ? null
+            : (text, href, title) {
+                if (href != null && href.isNotEmpty) {
+                  SafeUrlLauncher.launch(href);
+                }
+              },
       );
     } else {
-      // Pure HTML rendering
-      final sanitizedData = _sanitizeHtml(processedContent);
-
+      final sanitizedData = FormattedContentWidget.sanitizeHtml(processedContent);
       child = Html(
         data: sanitizedData,
-        onLinkTap: (url, attributes, element) {
-          if (url != null && url.isNotEmpty) {
-            SafeUrlLauncher.launch(url);
-          }
-        },
+        onLinkTap: forMeasurement
+            ? null
+            : (url, attributes, element) {
+                if (url != null && url.isNotEmpty) {
+                  SafeUrlLauncher.launch(url);
+                }
+              },
         style: {
           "body": Style(
             margin: Margins.zero,
             padding: HtmlPaddings.zero,
-            fontSize: FontSize(fontSize),
+            fontSize: FontSize(widget.fontSize),
             lineHeight: const LineHeight(1.5),
             color: defaultColor,
           ),
@@ -314,20 +389,153 @@ class FormattedContentWidget extends StatelessWidget {
       );
     }
 
-    if (maxLines != null) {
-      child = ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: fontSize * 1.5 * maxLines!,
-        ),
+    // Hard maxLines constraint if specified and not expandable
+    if (widget.maxLines != null && !widget.isExpandable) {
+      final hardMaxHeight = widget.fontSize * 1.5 * widget.maxLines!;
+      child = SizedBox(
+        height: hardMaxHeight,
         child: ClipRect(
-          child: child,
+          child: OverflowBox(
+            alignment: Alignment.topCenter,
+            minHeight: 0,
+            maxHeight: double.infinity,
+            minWidth: 0,
+            maxWidth: double.infinity,
+            child: child,
+          ),
         ),
       );
     }
 
+    return child;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.content.trim().isEmpty) return const SizedBox.shrink();
+
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final defaultColor = widget.style?.color ??
+        theme.textTheme.bodyMedium?.color ??
+        (isDark ? Colors.white : Colors.black87);
+    final processedContent = FormattedContentWidget.convertBbcodeToMarkdown(widget.content);
+    final textDirection = FormattedContentWidget.isArabic(processedContent)
+        ? TextDirection.rtl
+        : TextDirection.ltr;
+    final l10n = AppLocalizations.of(context);
+
+    final collapsedHeight = widget.fontSize * 1.5 * widget.collapsedMaxLines + 8.0;
+
+    // Normal non-expandable rendering
+    if (!widget.isExpandable) {
+      return Directionality(
+        textDirection: textDirection,
+        child: _buildContent(context, defaultColor),
+      );
+    }
+
+    Widget mainContent = _buildContent(context, defaultColor);
+
+    // If collapsing and overflowing, apply height constraint and gradient fade
+    if (_isOverflowing && !_isExpanded) {
+      Widget collapsedBox = SizedBox(
+        height: collapsedHeight,
+        child: ClipRect(
+          child: OverflowBox(
+            alignment: Alignment.topCenter,
+            minHeight: 0,
+            maxHeight: double.infinity,
+            minWidth: 0,
+            maxWidth: double.infinity,
+            child: mainContent,
+          ),
+        ),
+      );
+
+      if (widget.showGradientFade) {
+        mainContent = ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [0.0, 0.65, 1.0],
+              colors: [Colors.black, Colors.black, Colors.transparent],
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.dstIn,
+          child: collapsedBox,
+        );
+      } else {
+        mainContent = collapsedBox;
+      }
+    }
+
     return Directionality(
       textDirection: textDirection,
-      child: child,
+      child: Stack(
+        children: [
+          // Background measurement widget (runs offstage when collapsed to track exact overflow)
+          if (!_isExpanded)
+            Offstage(
+              offstage: true,
+              child: KeyedSubtree(
+                key: _measureKey,
+                child: _buildContent(context, defaultColor, forMeasurement: true),
+              ),
+            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AnimatedSize(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeInOutCubic,
+                alignment: Alignment.topCenter,
+                child: mainContent,
+              ),
+              if (_isOverflowing) ...[
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    final nextState = !_isExpanded;
+                    setState(() {
+                      _isExpanded = nextState;
+                    });
+                    widget.onExpandToggled?.call(nextState);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 6.0, bottom: 2.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _isExpanded
+                              ? (widget.seeLessLabel ?? l10n?.seeLess ?? 'See less')
+                              : (widget.seeMoreLabel ?? l10n?.seeMore ?? 'See more'),
+                          style: TextStyle(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.w600,
+                            fontSize: widget.fontSize - 1.5,
+                          ),
+                        ),
+                        const SizedBox(width: 3),
+                        Icon(
+                          _isExpanded
+                              ? Icons.keyboard_arrow_up_rounded
+                              : Icons.keyboard_arrow_down_rounded,
+                          size: 18,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

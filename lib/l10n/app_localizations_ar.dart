@@ -151,4 +151,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get returnToMainPlayer => 'العودة للمشغل الرئيسي';
+
+  @override
+  String get seeMore => 'رؤية المزيد';
+
+  @override
+  String get seeLess => 'رؤية أقل';
+
+  @override
+  String get readMore => 'قراءة المزيد';
+
+  @override
+  String get readLess => 'قراءة أقل';
 }

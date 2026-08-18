@@ -29,7 +29,6 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
   List<StatusModel> _suggestedVideos = [];
   bool _isFollowing = false;
   bool _isSaved = false;
-  bool _isDescExpanded = false;
 
   @override
   void initState() {
@@ -379,26 +378,12 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                         color: const Color(0xFF1D2333),
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          FormattedContentWidget(
-                            content: _currentStatus.displayContent ?? _currentStatus.text,
-                            fontSize: 14.0,
-                            maxLines: _isDescExpanded ? null : 6,
-                            style: const TextStyle(color: Colors.white70),
-                          ),
-                          GestureDetector(
-                            onTap: () => setState(() => _isDescExpanded = !_isDescExpanded),
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 8),
-                              child: Text(
-                                _isDescExpanded ? 'عرض أقل' : 'عرض المزيد',
-                                style: const TextStyle(color: Color(0xFF615DFA), fontSize: 12, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                        ],
+                      child: FormattedContentWidget(
+                        content: _currentStatus.displayContent ?? _currentStatus.text,
+                        fontSize: 14.0,
+                        isExpandable: true,
+                        collapsedMaxLines: 5,
+                        style: const TextStyle(color: Colors.white70),
                       ),
                     ),
 

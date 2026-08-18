@@ -47,5 +47,9 @@
   "editPost": "تعديل المنشور",
   "spread": "انشر",
   "originalAudio": "الصوت الأصلي",
-  "returnToMainPlayer": "العودة للمشغل الرئيسي"
+  "returnToMainPlayer": "العودة للمشغل الرئيسي",
+  "seeMore": "رؤية المزيد",
+  "seeLess": "رؤية أقل",
+  "readMore": "قراءة المزيد",
+  "readLess": "قراءة أقل"
 }

@@ -1,6 +1,6 @@
 # MYADS Mobile App
 
-> **Version:** 1.7.6+18 | **Platform:** Android | **Framework:** Flutter 3.27+ / Dart
+> **Version:** 1.7.8+20 | **Platform:** Android | **Framework:** Flutter 3.27+ / Dart
 
 The official first-party mobile client for the [MYADS](https://github.com/mrghozzi/myads) social network and ad exchange platform. Built with Flutter and powered by the MYADS Laravel REST API (Sanctum).
 
@@ -13,6 +13,7 @@ The official first-party mobile client for the [MYADS](https://github.com/mrghoz
 - **Nested Routing:** Implemented using GoRouter's `ShellRoute`.
 - **Tap-to-Scroll-to-Top:** Re-selecting the Home navigation tab while already viewing the home screen smoothly scrolls the feed back to the top.
 - **Localization:** Native support for English and Arabic. The app automatically adapts to RTL layouts and injects `Accept-Language` headers for localized server responses.
+- **Expandable Long Posts:** Intelligent truncation with smooth in-place expansion for long posts and reposts with localized "See more" / "See less" ("رؤية المزيد" / "رؤية أقل") toggle buttons and gradient fade.
 
 ### Video Hub & Video Parity
 - **Dedicated Video Hub Screen (`/video`):** Full mobile parity with the web Video Hub, featuring Glassmorphic Hero Header with search bar, Category Filter Pills (`All`, `Videos`, `Shorts Clips`, `Trending`, `Latest`), 16:9 Spotlight Hero Video Card, horizontal YouTube Shorts Clips shelf, and responsive 16:9 Video Grid.

@@ -1,5 +1,16 @@
 # MYADS Mobile App — Changelog
 
+## v1.7.8+20
+> **Android Toolchain Modernization & Localization Configuration Cleanup** — Upgraded Kotlin Gradle Plugin to `2.2.20` satisfying Flutter minimum version requirements and eliminated deprecated `synthetic-package` option from localization configuration.
+
+### Toolchain & Build System
+* **Kotlin Gradle Plugin Upgrade (`settings.gradle.kts`)**:
+  - Upgraded `org.jetbrains.kotlin.android` plugin from `2.1.0` to `2.2.20`, satisfying Flutter Gradle plugin minimum version requirements and resolving Android build failures on AGP 9+.
+* **Localization Configuration Cleanup (`l10n.yaml`)**:
+  - Removed obsolete `synthetic-package: false` parameter to conform with modern Flutter localization guidelines and eliminate deprecation warnings.
+
+---
+
 ## v1.7.7+19
 > **Expandable Long Posts & Multilingual "See More" Support** — Implemented intelligent truncation and smooth in-place expansion for long posts and repost embeds with localized "See more" / "See less" ("رؤية المزيد" / "رؤية أقل") toggle buttons, subtle bottom gradient fade-out, and accurate overflow detection.
 

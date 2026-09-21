@@ -177,6 +177,17 @@ class FeedNotifier extends Notifier<FeedState> {
       state = state.copyWith(statuses: newStatuses);
     }
   }
+
+  void toggleSaveStatus(int statusId, bool hasSaved) {
+    final index = state.statuses.indexWhere((s) => s.id == statusId);
+    if (index != -1) {
+      final status = state.statuses[index];
+      final updated = status.copyWith(hasSaved: hasSaved);
+      final newStatuses = List<StatusModel>.from(state.statuses);
+      newStatuses[index] = updated;
+      state = state.copyWith(statuses: newStatuses);
+    }
+  }
 }
 
 final feedProvider = NotifierProvider<FeedNotifier, FeedState>(() {

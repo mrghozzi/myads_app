@@ -82,6 +82,7 @@ class SettingsHubScreen extends ConsumerWidget {
             _buildListTile(context, Icons.share, l10n.socialLinks, '/settings/social', isDark),
             _buildListTile(context, Icons.desktop_windows, l10n.sessions, '/settings/sessions', isDark),
             _buildListTile(context, Icons.key, l10n.authorizedApps, '/settings/apps', isDark),
+            _buildListTile(context, Icons.bookmark_border_rounded, l10n.savedPosts, '/saved-posts', isDark),
 
             const SizedBox(height: 24),
 

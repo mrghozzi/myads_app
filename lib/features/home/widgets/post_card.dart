@@ -10,6 +10,8 @@ import 'file_download_widget.dart';
 import 'activity_card_widget.dart';
 import '../../../core/widgets/hexagon_avatar.dart';
 import '../../../core/widgets/formatted_content_widget.dart';
+import '../../posts/posts_repository.dart';
+import '../../../core/providers/feed_provider.dart';
 
 class PostCard extends ConsumerStatefulWidget {
   final StatusModel status;
@@ -25,6 +27,7 @@ class _PostCardState extends ConsumerState<PostCard> {
   late bool hasReacted;
   late String? reactionType;
   late int likesCount;
+  late bool isSaved;
 
   @override
   void initState() {
@@ -32,6 +35,46 @@ class _PostCardState extends ConsumerState<PostCard> {
     hasReacted = widget.status.hasLiked;
     reactionType = widget.status.userReaction;
     likesCount = widget.status.likesCount;
+    isSaved = widget.status.hasSaved;
+  }
+
+  @override
+  void didUpdateWidget(covariant PostCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.status.hasSaved != widget.status.hasSaved) {
+      isSaved = widget.status.hasSaved;
+    }
+  }
+
+  Future<void> _toggleBookmark() async {
+    final oldSaved = isSaved;
+    final newSaved = !oldSaved;
+
+    setState(() {
+      isSaved = newSaved;
+    });
+
+    // Notify feed provider immediately
+    ref.read(feedProvider.notifier).toggleSaveStatus(widget.status.id, newSaved);
+
+    try {
+      final repo = PostsRepository();
+      final res = await repo.toggleSaveStatus(widget.status.id);
+      final bool serverSaved = res['saved'] == true;
+      if (mounted && isSaved != serverSaved) {
+        setState(() {
+          isSaved = serverSaved;
+        });
+        ref.read(feedProvider.notifier).toggleSaveStatus(widget.status.id, serverSaved);
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          isSaved = oldSaved;
+        });
+        ref.read(feedProvider.notifier).toggleSaveStatus(widget.status.id, oldSaved);
+      }
+    }
   }
 
   void _toggleReaction(String newReaction) async {
@@ -153,6 +196,14 @@ class _PostCardState extends ConsumerState<PostCard> {
                     // Delete logic should be handled by a provider or event, but for now we'll just leave it wired to pop
                   },
                 ),
+              ListTile(
+                leading: Icon(isSaved ? Icons.bookmark_remove_outlined : Icons.bookmark_add_outlined),
+                title: Text(isSaved ? 'Remove from Saved' : 'Save Post'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _toggleBookmark();
+                },
+              ),
               ListTile(
                 leading: const Icon(Icons.report_outlined),
                 title: const Text('Report Post'),
@@ -711,6 +762,12 @@ class _PostCardState extends ConsumerState<PostCard> {
               context.push('/post', extra: widget.status);
             }
           },
+        ),
+        _AnimatedActionButton(
+          icon: isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+          label: isSaved ? 'Saved' : 'Save',
+          color: isSaved ? const Color(0xFF615DFA) : null,
+          onTap: _toggleBookmark,
         ),
         _AnimatedActionButton(
           icon: Icons.ios_share_rounded,

@@ -8,7 +8,7 @@ class ApiInterceptor extends Interceptor {
   @override
   Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     // Inject API Key (from .env, non-sensitive build config)
-    final apiKey = dotenv.env['MOBILE_API_KEY'];
+    final apiKey = dotenv.isInitialized ? dotenv.env['MOBILE_API_KEY'] : null;
     if (apiKey != null && apiKey.isNotEmpty) {
       options.headers['X-API-KEY'] = apiKey.trim();
     }

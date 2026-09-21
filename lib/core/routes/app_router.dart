@@ -10,6 +10,7 @@ import '../../features/video/video_hub_screen.dart';
 import '../../features/explore/explore_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../../features/posts/composer_screen.dart';
+import '../../features/posts/saved_posts_screen.dart';
 import '../../features/settings/screens/settings_hub_screen.dart';
 import '../../features/notifications/screens/notifications_screen.dart';
 import '../../features/messages/screens/messages_list_screen.dart';
@@ -261,6 +262,11 @@ final appRouter = GoRouter(
       path: '/billing',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const BillingScreen(),
+    ),
+    GoRoute(
+      path: '/saved-posts',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const SavedPostsScreen(),
     ),
   ],
 );

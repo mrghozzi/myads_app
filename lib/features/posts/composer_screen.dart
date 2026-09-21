@@ -11,6 +11,7 @@ import '../../core/widgets/hexagon_avatar.dart';
 import '../../features/profile/profile_provider.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:path/path.dart' as p;
+import 'widgets/smart_autocomplete_overlay.dart';
 
 final composerProvider = Provider((ref) => PostsRepository());
 
@@ -493,6 +494,9 @@ class _ComposerScreenState extends ConsumerState<ComposerScreen> {
                               hintStyle: TextStyle(color: mutedColor.withValues(alpha: 0.7)),
                               border: InputBorder.none,
                             ),
+                          ),
+                          SmartAutocompleteOverlay(
+                            controller: _textController,
                           ),
                         ],
                       ),

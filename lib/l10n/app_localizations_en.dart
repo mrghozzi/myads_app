@@ -163,4 +163,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get readLess => 'Read less';
+
+  @override
+  String get savedPosts => 'Saved Posts';
+
+  @override
+  String get saved => 'Saved';
+
+  @override
+  String get bookmark => 'Bookmark';
+
+  @override
+  String get noSavedPosts => 'No saved posts yet';
+
+  @override
+  String get noSavedPostsDesc =>
+      'Posts you bookmark will appear here for easy access anytime.';
 }

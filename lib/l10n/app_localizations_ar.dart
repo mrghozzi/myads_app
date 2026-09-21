@@ -163,4 +163,20 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get readLess => 'قراءة أقل';
+
+  @override
+  String get savedPosts => 'العناصر المحفوظة';
+
+  @override
+  String get saved => 'محفوظ';
+
+  @override
+  String get bookmark => 'حفظ';
+
+  @override
+  String get noSavedPosts => 'لا توجد عناصر محفوظة حتى الآن';
+
+  @override
+  String get noSavedPostsDesc =>
+      'المنشورات التي تقوم بحفظها ستظهر هنا لتسهيل الوصول إليها في أي وقت.';
 }

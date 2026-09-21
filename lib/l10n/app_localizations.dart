@@ -409,6 +409,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Read less'**
   String get readLess;
+
+  /// No description provided for @savedPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved Posts'**
+  String get savedPosts;
+
+  /// No description provided for @saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get saved;
+
+  /// No description provided for @bookmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmark'**
+  String get bookmark;
+
+  /// No description provided for @noSavedPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved posts yet'**
+  String get noSavedPosts;
+
+  /// No description provided for @noSavedPostsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Posts you bookmark will appear here for easy access anytime.'**
+  String get noSavedPostsDesc;
 }
 
 class _AppLocalizationsDelegate

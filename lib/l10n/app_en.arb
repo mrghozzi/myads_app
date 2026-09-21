@@ -51,5 +51,10 @@
   "seeMore": "See more",
   "seeLess": "See less",
   "readMore": "Read more",
-  "readLess": "Read less"
+  "readLess": "Read less",
+  "savedPosts": "Saved Posts",
+  "saved": "Saved",
+  "bookmark": "Bookmark",
+  "noSavedPosts": "No saved posts yet",
+  "noSavedPostsDesc": "Posts you bookmark will appear here for easy access anytime."
 }

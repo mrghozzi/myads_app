@@ -5,7 +5,7 @@ import 'api_interceptor.dart';
 class ApiClient {
   static final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: dotenv.env['BASE_URL'] ?? 'http://localhost/myads/api',
+      baseUrl: (dotenv.isInitialized ? dotenv.env['BASE_URL'] : null) ?? 'http://localhost/myads/api',
       connectTimeout: const Duration(seconds: 30),
       receiveTimeout: const Duration(seconds: 30),
     ),

@@ -28,4 +28,52 @@ class PostsRepository {
   Future<void> deletePost(int statusId) async {
     await _dio.delete('/statuses/$statusId');
   }
+
+  /// Toggle bookmark / save status for current user
+  Future<Map<String, dynamic>> toggleSaveStatus(int statusId) async {
+    final response = await _dio.post('/statuses/save-toggle', data: {
+      'status_id': statusId,
+    });
+    return response.data is Map<String, dynamic>
+        ? response.data as Map<String, dynamic>
+        : Map<String, dynamic>.from(response.data as Map);
+  }
+
+  /// Fetch paginated saved statuses
+  Future<List<StatusModel>> getSavedStatuses({int page = 1}) async {
+    final response = await _dio.get('/statuses/saved', queryParameters: {
+      'page': page,
+    });
+    final data = response.data;
+    if (data is Map && data.containsKey('data')) {
+      final List items = data['data'] ?? [];
+      return items.map((e) => StatusModel.fromJson(e as Map<String, dynamic>)).toList();
+    }
+    return [];
+  }
+
+  /// Suggest hashtags for autocomplete
+  Future<List<Map<String, dynamic>>> suggestTags(String query) async {
+    final response = await _dio.get('/tags/suggest', queryParameters: {
+      'q': query,
+    });
+    final data = response.data;
+    if (data is List) {
+      return List<Map<String, dynamic>>.from(data.whereType<Map>());
+    }
+    return [];
+  }
+
+  /// Suggest users for @mention autocomplete
+  Future<List<Map<String, dynamic>>> suggestUsers(String query) async {
+    final response = await _dio.get('/mentions/users', queryParameters: {
+      'q': query,
+    });
+    final data = response.data;
+    if (data is List) {
+      return List<Map<String, dynamic>>.from(data.whereType<Map>());
+    }
+    return [];
+  }
 }
+

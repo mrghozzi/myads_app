@@ -5,6 +5,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../core/models/status_model.dart';
 import '../../core/models/comment_model.dart';
 import '../../core/network/api_client.dart';
+import '../posts/posts_repository.dart';
 import 'widgets/post_card.dart';
 import '../../core/widgets/hexagon_avatar.dart';
 import '../../core/widgets/formatted_content_widget.dart';
@@ -140,16 +141,19 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
   }
 
   Future<void> _toggleSave() async {
-    setState(() => _isSaved = !_isSaved);
+    final oldSaved = _isSaved;
+    final targetSaved = !oldSaved;
+    setState(() => _isSaved = targetSaved);
 
     try {
-      if (_isSaved) {
-        await ApiClient.instance.post('/clips/${_currentStatus.id}/save');
-      } else {
-        await ApiClient.instance.delete('/clips/${_currentStatus.id}/save');
+      final repo = PostsRepository();
+      final res = await repo.toggleSaveStatus(_currentStatus.id);
+      final bool serverSaved = res['saved'] == true;
+      if (mounted && _isSaved != serverSaved) {
+        setState(() => _isSaved = serverSaved);
       }
     } catch (_) {
-      if (mounted) setState(() => _isSaved = !_isSaved);
+      if (mounted) setState(() => _isSaved = oldSaved);
     }
   }
 

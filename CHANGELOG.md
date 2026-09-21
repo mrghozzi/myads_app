@@ -1,5 +1,31 @@
 # MYADS Mobile App — Changelog
 
+## v1.7.9+21
+> **Universal Saved Posts (Bookmarks), Smart Mentions & Hashtags Autocomplete, and Complete Backend Sync** — Synchronized `myads_app` with the latest additions in the `myads` core web script, introducing universal post bookmarking/saving, a dedicated `SavedPostsScreen` with infinite pagination, interactive `@` and `#` autocomplete overlay in post composer, and robust dotenv fallbacks.
+
+### Features & Parity Updates
+* **Universal Bookmarks & Saved Statuses (`saved_posts_provider.dart`, `saved_posts_screen.dart`, `post_card.dart`, `post_details_screen.dart`)**:
+  - Added Bookmark toggle action button (`Icons.bookmark_rounded` / `Icons.bookmark_border_rounded`) directly on `PostCard` action row and more options modal sheet with instant optimistic UI feedback.
+  - Updated `post_details_screen.dart` to use universal status bookmark API (`/statuses/save-toggle`) instead of clips-only endpoints.
+  - Implemented `SavedPostsNotifier` and `savedPostsProvider` for full Riverpod state management and automatic cross-feed synchronization.
+  - Created `SavedPostsScreen` with pull-to-refresh (`RefreshIndicator`), infinite scroll pagination, skeleton loaders, and modern empty state card.
+  - Registered `/saved-posts` route in `app_router.dart` and added quick shortcuts in both `ExploreScreen` Discover grid and `SettingsHubScreen`.
+* **Smart Mentions & Hashtags Autocomplete (`smart_autocomplete_overlay.dart` & `composer_screen.dart`)**:
+  - Created `SmartAutocompleteOverlay` that detects `@` and `#` in real-time right before the cursor in `TextField`.
+  - Added debounced querying to `/mentions/users` (displaying user avatars, handles, and names) and `/tags/suggest` (displaying `#tag` pills and post counts).
+  - Tapping a suggestion seamlessly replaces the active token with `@username ` or `#tag ` and sets cursor position.
+  - Integrated into `ComposerScreen` for a fluid post-authoring experience.
+* **API Client & Networking Resilience (`posts_repository.dart`, `api_client.dart`, `api_interceptor.dart`)**:
+  - Added `toggleSaveStatus`, `getSavedStatuses`, `suggestTags`, and `suggestUsers` to `PostsRepository`.
+  - Safely checked `dotenv.isInitialized` before accessing environment variables in `ApiClient` and `ApiInterceptor` to prevent startup and unit test crashes.
+* **Model Enhancements (`status_model.dart`)**:
+  - Added immutable `copyWith` method to `StatusModel` supporting all post fields, bookmark state (`hasSaved`), media, attachments, and reaction counters.
+* **Localization & Test Suite (`app_en.arb`, `app_ar.arb`, `widget_test.dart`)**:
+  - Added localized strings for `savedPosts`, `saved`, `bookmark`, `noSavedPosts`, and `noSavedPostsDesc` in both English and Arabic.
+  - Replaced legacy template counter test with comprehensive unit and widget tests for `StatusModel.copyWith`, `SavedPostsState`, and `SmartAutocompleteOverlay`.
+
+---
+
 ## v1.7.8+20
 > **Android Toolchain Modernization & Localization Configuration Cleanup** — Upgraded Kotlin Gradle Plugin to `2.2.20` satisfying Flutter minimum version requirements and eliminated deprecated `synthetic-package` option from localization configuration.
 

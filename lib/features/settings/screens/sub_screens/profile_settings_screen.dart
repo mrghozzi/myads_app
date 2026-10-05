@@ -43,6 +43,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     try {
       await ApiClient.instance.post('/settings/profile', data: {
         'about_me': _aboutController.text,
+        'email': _emailController.text,
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Saved successfully'), backgroundColor: Colors.green));

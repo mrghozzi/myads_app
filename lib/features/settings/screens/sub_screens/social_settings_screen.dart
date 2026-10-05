@@ -29,11 +29,20 @@ class _SocialSettingsScreenState extends ConsumerState<SocialSettingsScreen> {
   Future<void> _loadData() async {
     try {
       final res = await ApiClient.instance.get('/settings/social');
-      if (res.data != null && res.data['socials'] != null) {
-        final socials = res.data['socials'] as List;
-        for (var s in socials) {
-          if (_controllers.containsKey(s['platform'])) {
-            _controllers[s['platform']]!.text = s['url'];
+      if (res.data != null) {
+        if (res.data['socials'] is List) {
+          final socials = res.data['socials'] as List;
+          for (var s in socials) {
+            if (s is Map && _controllers.containsKey(s['platform'])) {
+              _controllers[s['platform']]!.text = s['url']?.toString() ?? '';
+            }
+          }
+        } else if (res.data['links'] is Map) {
+          final links = res.data['links'] as Map;
+          for (var entry in links.entries) {
+            if (_controllers.containsKey(entry.key.toString())) {
+              _controllers[entry.key.toString()]!.text = entry.value?.toString() ?? '';
+            }
           }
         }
       }
@@ -53,7 +62,10 @@ class _SocialSettingsScreenState extends ConsumerState<SocialSettingsScreen> {
       }
     }
     try {
-      await ApiClient.instance.post('/settings/social', data: {'socials': data});
+      await ApiClient.instance.post('/settings/social', data: {
+        'socials': data,
+        ...data,
+      });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Saved successfully'), backgroundColor: Colors.green));
       }

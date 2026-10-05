@@ -41,6 +41,7 @@ class _BadgesSettingsScreenState extends ConsumerState<BadgesSettingsScreen> {
     try {
       await ApiClient.instance.post('/settings/badges', data: {
         'showcase': _selectedBadges.toList(),
+        'badge_ids': _selectedBadges.toList(),
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Saved successfully'), backgroundColor: Colors.green));

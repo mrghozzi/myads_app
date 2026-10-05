@@ -40,25 +40,37 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
 
   Future<void> _markAllRead() async {
     try {
-      await ApiClient.instance.post('/notifications/mark-all-read');
+      await ApiClient.instance.post('/notifications/read-all');
+    } catch (_) {
+      try {
+        await ApiClient.instance.post('/notifications/mark-all-read');
+      } catch (_) {}
+    }
+    if (mounted) {
       setState(() {
         for (var n in _notifications) {
           n['is_unread'] = false;
         }
       });
-    } catch (_) {}
+    }
   }
 
   Future<void> _markAsRead(int id) async {
     try {
-      await ApiClient.instance.post('/notifications/$id/mark-read');
+      await ApiClient.instance.post('/notifications/$id/read');
+    } catch (_) {
+      try {
+        await ApiClient.instance.post('/notifications/$id/mark-read');
+      } catch (_) {}
+    }
+    if (mounted) {
       setState(() {
         final index = _notifications.indexWhere((n) => n['id'] == id);
         if (index != -1) {
           _notifications[index]['is_unread'] = false;
         }
       });
-    } catch (_) {}
+    }
   }
 
   IconData _getIconData(String iconName) {

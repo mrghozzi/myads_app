@@ -23,6 +23,7 @@ class OrderActionNotifier extends Notifier<AsyncValue<void>> {
       final response = await ApiClient.instance.post(
         '/orders/$orderId/offers',
         data: {
+          'content': txt,
           'txt': txt,
           'price': price,
           'delivery_days': deliveryDays,

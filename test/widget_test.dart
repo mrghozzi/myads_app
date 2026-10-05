@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myads_app/core/models/status_model.dart';
 import 'package:myads_app/core/models/user_model.dart';
 import 'package:myads_app/core/providers/saved_posts_provider.dart';

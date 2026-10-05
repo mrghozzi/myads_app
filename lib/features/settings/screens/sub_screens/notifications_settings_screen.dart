@@ -30,12 +30,14 @@ class _NotificationsSettingsScreenState extends ConsumerState<NotificationsSetti
     try {
       final res = await ApiClient.instance.get('/settings/notifications');
       if (res.data != null) {
-        final data = res.data;
+        bool isTrue(dynamic val) => val == true || val == 1 || val == '1';
+        final data = res.data is Map ? (res.data as Map) : {};
+        final settings = (data['settings'] is Map) ? (data['settings'] as Map) : {};
         _prefs = {
-          'email_mentions': data['email_mentions'] == 1,
-          'email_messages': data['email_messages'] == 1,
-          'email_follows': data['email_follows'] == 1,
-          'email_comments': data['email_comments'] == 1,
+          'email_mentions': isTrue(data['email_mentions'] ?? settings['email_mention'] ?? true),
+          'email_messages': isTrue(data['email_messages'] ?? settings['email_new_message'] ?? true),
+          'email_follows': isTrue(data['email_follows'] ?? settings['email_new_follower'] ?? true),
+          'email_comments': isTrue(data['email_comments'] ?? settings['email_new_comment'] ?? true),
         };
       }
     } catch (e) {
@@ -53,6 +55,10 @@ class _NotificationsSettingsScreenState extends ConsumerState<NotificationsSetti
         'email_messages': _prefs['email_messages']! ? 1 : 0,
         'email_follows': _prefs['email_follows']! ? 1 : 0,
         'email_comments': _prefs['email_comments']! ? 1 : 0,
+        'email_mention': _prefs['email_mentions']!,
+        'email_new_message': _prefs['email_messages']!,
+        'email_new_follower': _prefs['email_follows']!,
+        'email_new_comment': _prefs['email_comments']!,
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Saved successfully'), backgroundColor: Colors.green));

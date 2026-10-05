@@ -1,5 +1,28 @@
 # MYADS Mobile App — Changelog
 
+## v1.8.0+22
+> **Full MYADS v4.6.1 Compatibility, Gamification Quests Alignment, and Settings/Orders Bidirectional API Synchronization** — Completed comprehensive compatibility audit and synchronization between `myads_app` and the latest release of MYADS web script (**v4.6.1**). Resolved API schema contracts across Settings (Privacy, Social Links, Notifications, Badges Showcase), Gamification Quests, Marketplace/Orders offer payloads, and achieved zero Flutter analysis warnings.
+
+### Full Compatibility & Core Updates
+* **Gamification Quests Alignment (`Quest.php`, `GamificationApiController.php`, `gamification_screen.dart`)**:
+  - Implemented `scopeActive` on backend `Quest` model, preventing fatal query exceptions.
+  - Normalized backend `/gamification/quests` endpoint to format responses for both daily/weekly sections and legacy flat lists (`daily_quests`, `weekly_quests`, and `quests`).
+  - Synced database columns (`reward_points`, `target_count`, `name_key`, `description_key`) with the Flutter `QuestModel`.
+* **Settings API Bidirectional Synchronization (`SettingsController.php`, `routes/api.php`, Settings Sub-screens)**:
+  - **Privacy Settings**: Added bidirectional translation between mobile integers (`visibility`, `dm`, `mention`) and the backend `UserPrivacyService` schema (`profile_visibility`, `allow_direct_messages`, `allow_mentions`).
+  - **Social Links**: Enhanced `getSocial` and `updateSocial` to accept and return both flat key-value pairs and structured `{platform, url}` arrays.
+  - **Notification Preferences**: Added seamless key mapping for both mobile plural aliases (`email_mentions`, `email_messages`, `email_follows`, `email_comments`) and canonical database columns (`email_mention`, `email_new_message`, etc.).
+  - **Badges Showcase**: Enhanced `/settings/badges` to supply computed `is_shown` boolean flags per badge and accept either `showcase` or `badge_ids` payload arrays.
+* **Orders / Offers API Compatibility (`OrderApiController.php`, `orders_provider.dart`)**:
+  - Synced offer proposal endpoint (`/orders/{id}/offers`) to accept both `content` and `txt` parameters seamlessly.
+* **Notifications Mark-as-Read Endpoint Compatibility (`routes/api.php`, `notifications_screen.dart`)**:
+  - Supported both `/notifications/read-all` & `/notifications/mark-all-read`, as well as `/notifications/{id}/read` & `/notifications/{id}/mark-read` with automatic fallback.
+* **Code Cleanliness & Dart 3.13 Analyzer Modernization**:
+  - Resolved all deprecation warnings (`SharePlus` / `Share.share`), cleaned up unused test imports, and updated wildcard underscores in `composer_screen.dart`.
+  - Verified 100% pass across all Flutter tests and Laravel mobile API test suites.
+
+---
+
 ## v1.7.9+21
 > **Universal Saved Posts (Bookmarks), Smart Mentions & Hashtags Autocomplete, and Complete Backend Sync** — Synchronized `myads_app` with the latest additions in the `myads` core web script, introducing universal post bookmarking/saving, a dedicated `SavedPostsScreen` with infinite pagination, interactive `@` and `#` autocomplete overlay in post composer, and robust dotenv fallbacks.
 

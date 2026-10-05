@@ -421,7 +421,7 @@ class _ComposerScreenState extends ConsumerState<ComposerScreen> {
                                   profileBadgeColor: u.profileBadgeColor,
                                 ),
                                 loading: () => const CircleAvatar(radius: 20, backgroundColor: Colors.grey),
-                                error: (_, __) => const CircleAvatar(radius: 20, child: Icon(Icons.person)),
+                                error: (_, _) => const CircleAvatar(radius: 20, child: Icon(Icons.person)),
                               ),
                               const SizedBox(width: 12),
                               Expanded(
@@ -438,7 +438,7 @@ class _ComposerScreenState extends ConsumerState<ComposerScreen> {
                                         ),
                                       ),
                                       loading: () => const SizedBox(),
-                                      error: (_, __) => const Text('User'),
+                                      error: (_, _) => const Text('User'),
                                     ),
                                     if (_userGroups.isNotEmpty)
                                       Padding(

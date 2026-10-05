@@ -1,6 +1,6 @@
 # MYADS Mobile App
 
-> **Version:** 1.7.8+20 | **Platform:** Android | **Framework:** Flutter 3.27+ / Dart
+> **Version:** 1.8.0+22 | **Platform:** Android | **Framework:** Flutter 3.27+ / Dart 3.13+
 
 The official first-party mobile client for the [MYADS](https://github.com/mrghozzi/myads) social network and ad exchange platform. Built with Flutter and powered by the MYADS Laravel REST API (Sanctum).
 
@@ -160,13 +160,15 @@ flutter build apk --release
 
 ## API Requirements
 
-The app requires the MYADS backend API (v4.5.2+) with the following:
+The app requires the MYADS backend API (v4.6.1+) with the following:
 - Laravel Sanctum enabled
 - Admin-generated API key configured in `.env` (sent via the `X-API-KEY` header only; query parameter not accepted)
 - API rate limiting enabled: `/api/login` (5/min), `/api/register` (3/min)
 - `StatusResource` returning `repost_record`, `media`, `gallery`, and `attachments` fields
 - `UserResource` returning `publicRouteIdentifier()` when `public_member_ids_enabled` is active
 - `Api\ProfileController::statuses()` and `Api\PortalController::index()` calling `decorateMany()` for related content and repost relation hydration
+- Full Gamification Quests API support (`/api/gamification/quests` and `/api/gamification/quests/{id}/claim`)
+- Enhanced Settings API with dual-schema support (Profile, Privacy, Social Links, Notifications, Badges Showcase)
 
 See `Documents/API_DOCS.md` in the main project for full endpoint documentation.
 
@@ -174,4 +176,4 @@ See `Documents/API_DOCS.md` in the main project for full endpoint documentation.
 
 ## License
 
-MIT — Part of the MYADS v4.5.2 project by mrghozzi.
+MIT — Part of the MYADS v4.6.1 project by mrghozzi.

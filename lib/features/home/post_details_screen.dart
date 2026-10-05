@@ -216,6 +216,7 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
 
   void _sharePost() {
     final url = _currentStatus.permalink ?? 'https://myads.site/t/${_currentStatus.id}';
+    // ignore: deprecated_member_use
     Share.share('شاهد هذا الفيديو المميز: $url');
   }
 

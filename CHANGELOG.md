@@ -1,5 +1,26 @@
 # MYADS Mobile App — Changelog
 
+## v1.8.1+23
+> **Service Orders Marketplace Full Parity, P2P Disclaimer Banner, Milestone Stepper & Contract Lifecycle** — Synchronized `myads_app` with the enhanced Service Orders Marketplace (`/orders`). Implemented the P2P platform disclaimer banner (highlighting non-escrow direct accountability), 5-step milestone tracking, requirements attachments display, revision request alerts and modal sheets, deliverable work downloads, and full interactive order lifecycle operations (award offer, start work, deliver, request revision, accept & review).
+
+### Service Orders Parity & Features
+* **P2P Disclaimer Banner (`orders_list_screen.dart`, `order_detail_screen.dart`)**:
+  - Embedded disclaimer banners on both the marketplace list and request detail screens clearly stating that the platform connects parties and disclaims legal/financial liability for direct peer-to-peer transactions.
+* **Milestone Progress Stepper (`order_detail_screen.dart`)**:
+  - Added a 5-step visual milestone tracker (Matching → Awarded → In Progress → Delivered → Completed) with due dates and overdue badge indicators.
+* **Requirements & Deliverables (`order_detail_screen.dart`)**:
+  - Displays project requirements attachments and deliverables with file names and notes.
+* **Contract Revisions (`order_detail_screen.dart`, `orders_provider.dart`)**:
+  - Interactive revision request alerts and bottom sheet for client revision notes and round counters.
+* **Full Order Lifecycle Management (`OrderApiController.php`, `orders_provider.dart`)**:
+  - Added mobile API support and Riverpod notifier actions for awarding offers, starting work, delivering deliverables, requesting revisions, completing with star ratings and reviews, and cancelling orders.
+* **Explore Discovery Integration (`explore_screen.dart`)**:
+  - Integrated "Service Orders" into the Discover 2x3 grid for immediate accessibility.
+* **Code Cleanliness & Static Analysis**:
+  - Verified 0 errors and 0 warnings on `flutter analyze` and 100% pass on all tests.
+
+---
+
 ## v1.8.0+22
 > **Full MYADS v4.6.1 Compatibility, Gamification Quests Alignment, and Settings/Orders Bidirectional API Synchronization** — Completed comprehensive compatibility audit and synchronization between `myads_app` and the latest release of MYADS web script (**v4.6.1**). Resolved API schema contracts across Settings (Privacy, Social Links, Notifications, Badges Showcase), Gamification Quests, Marketplace/Orders offer payloads, and achieved zero Flutter analysis warnings.
 

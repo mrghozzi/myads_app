@@ -245,6 +245,13 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> with SingleTicker
               gradient: const LinearGradient(colors: [Color(0xFF6366F1), Color(0xFF4F46E5)]),
               onTap: () => context.push('/saved-posts'),
             ),
+            _buildActionCard(
+              title: 'Service Orders',
+              subtitle: 'Requests & Gigs',
+              icon: Icons.assignment_outlined,
+              gradient: const LinearGradient(colors: [Color(0xFFF59E0B), Color(0xFFD97706)]),
+              onTap: () => context.push('/orders'),
+            ),
           ],
         ),
         const SizedBox(height: 32),

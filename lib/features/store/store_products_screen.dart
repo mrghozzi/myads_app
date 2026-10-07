@@ -91,6 +91,26 @@ class StoreProductsScreen extends ConsumerWidget {
                         ),
                       ),
                     ),
+                  if (product['is_pending'] == true)
+                    Positioned(
+                      top: 8,
+                      left: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.shade700,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Text(
+                          'قيد المراجعة',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -129,6 +149,19 @@ class StoreProductsScreen extends ConsumerWidget {
                         ),
                     ],
                   ),
+                  if (product['downloads_count'] != null && (product['downloads_count'] as num) > 0) ...[
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        const Icon(Icons.download_rounded, size: 13, color: Colors.grey),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${product['downloads_count']}',
+                          style: const TextStyle(color: Colors.grey, fontSize: 11),
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),

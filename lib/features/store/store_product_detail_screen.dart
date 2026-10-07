@@ -85,8 +85,41 @@ class StoreProductDetailScreen extends ConsumerWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
-                      Text('By ${product['seller']?['name'] ?? 'Unknown'}', style: const TextStyle(color: Colors.grey)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('By ${product['seller']?['name'] ?? 'Unknown'}', style: const TextStyle(color: Colors.grey)),
+                          if (product['downloads_count'] != null && (product['downloads_count'] as num) > 0)
+                            Row(
+                              children: [
+                                const Icon(Icons.download_rounded, size: 14, color: Colors.grey),
+                                const SizedBox(width: 4),
+                                Text('${product['downloads_count']} downloads', style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                              ],
+                            ),
+                        ],
+                      ),
+                      if (product['is_pending'] == true) ...[
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.amber.shade700.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.amber.shade700.withValues(alpha: 0.3)),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.schedule, size: 16, color: Colors.amber.shade700),
+                              const SizedBox(width: 8),
+                              Text(
+                                'هذا المنتج قيد المراجعة ولم يتم اعتماده للعامة بعد',
+                                style: TextStyle(color: Colors.amber.shade700, fontSize: 13, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                       const SizedBox(height: 24),
                       const Text('Description', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8),

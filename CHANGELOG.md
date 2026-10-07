@@ -1,5 +1,28 @@
 # MYADS Mobile App — Changelog
 
+## v1.8.2+24
+> **Store Marketplace Ratings & Reviews System, Screenshots Lightbox Gallery, and Live Demo / Video Previews Release** — Synchronized `myads_app` with the enhanced MYADS Store Marketplace. Introduced product star ratings and review badges across product cards, detailed 5-star customer reviews with verified buyer badges and rating distribution progress bars on product details, interactive screenshots carousel with full-screen zoomable lightbox viewer, and direct launcher integration for Live Demo previews and video walkthroughs.
+
+### Store Marketplace Ratings & Reviews
+* **Store Product Cards Ratings (`store_products_screen.dart`)**:
+  * Added star rating score badge and review count indicator directly on product cards in the store catalog.
+  * Added instant Live Demo preview button on product cards when a demo URL is provided.
+* **Customer Reviews & Rating Distribution (`store_product_detail_screen.dart`)**:
+  * Implemented 5-star rating summary card with overall average rating and total review counts.
+  * Added rating distribution progress bars showcasing percentages for 5, 4, 3, 2, and 1 star ratings.
+  * Added customer reviews feed displaying reviewer avatars, usernames, review dates, star ratings, and feedback text.
+  * Added Verified Buyer badge (`is_verified_buyer`) highlighting reviews written by confirmed purchasers.
+
+### Store Media Gallery & Previews
+* **Screenshots Modal Lightbox Viewer (`store_product_detail_screen.dart`)**:
+  * Implemented an interactive screenshots preview carousel with tap-to-expand full-screen modal lightbox.
+  * Supported swipe navigation and smooth image caching across screenshot collections.
+* **Live Demo & Video Launchers (`store_product_detail_screen.dart`)**:
+  * Added "Live Demo" button with external URL launcher allowing users to test web applications and SaaS demos.
+  * Added "Video Preview" launcher button for watching video walkthroughs.
+
+---
+
 ## v1.8.1+23
 > **Service Orders Marketplace Full Parity, P2P Disclaimer Banner, Milestone Stepper & Contract Lifecycle** — Synchronized `myads_app` with the enhanced Service Orders Marketplace (`/orders`). Implemented the P2P platform disclaimer banner (highlighting non-escrow direct accountability), 5-step milestone tracking, requirements attachments display, revision request alerts and modal sheets, deliverable work downloads, and full interactive order lifecycle operations (award offer, start work, deliver, request revision, accept & review).
 

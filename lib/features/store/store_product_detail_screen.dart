@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/widgets/formatted_content_widget.dart';
+import '../../core/utils/safe_url_launcher.dart';
 import 'store_provider.dart';
 
 class StoreProductDetailScreen extends ConsumerWidget {
@@ -85,20 +86,68 @@ class StoreProductDetailScreen extends ConsumerWidget {
                           ),
                         ],
                       ),
+                      const SizedBox(height: 8),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('By ${product['seller']?['name'] ?? 'Unknown'}', style: const TextStyle(color: Colors.grey)),
-                          if (product['downloads_count'] != null && (product['downloads_count'] as num) > 0)
-                            Row(
-                              children: [
-                                const Icon(Icons.download_rounded, size: 14, color: Colors.grey),
-                                const SizedBox(width: 4),
-                                Text('${product['downloads_count']} downloads', style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                          Row(
+                            children: [
+                              if (product['rating'] != null && (product['rating'] as num) > 0) ...[
+                                const Icon(Icons.star_rounded, size: 16, color: Colors.amber),
+                                const SizedBox(width: 2),
+                                Text(
+                                  '${product['rating']}',
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.amber),
+                                ),
+                                if (product['reviews_count'] != null)
+                                  Text(
+                                    ' (${product['reviews_count']})',
+                                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                  ),
+                                const SizedBox(width: 12),
                               ],
-                            ),
+                              if (product['downloads_count'] != null && (product['downloads_count'] as num) > 0)
+                                Row(
+                                  children: [
+                                    const Icon(Icons.download_rounded, size: 14, color: Colors.grey),
+                                    const SizedBox(width: 4),
+                                    Text('${product['downloads_count']} downloads', style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                                  ],
+                                ),
+                            ],
+                          ),
                         ],
                       ),
+                      if (product['live_demo_url'] != null || product['video_preview_url'] != null) ...[
+                        const SizedBox(height: 14),
+                        Wrap(
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: [
+                            if (product['live_demo_url'] != null)
+                              ElevatedButton.icon(
+                                onPressed: () => SafeUrlLauncher.launch(product['live_demo_url']),
+                                icon: const Icon(Icons.launch, size: 16, color: Colors.white),
+                                label: const Text('Live Demo', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF10A8B9),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                ),
+                              ),
+                            if (product['video_preview_url'] != null)
+                              OutlinedButton.icon(
+                                onPressed: () => SafeUrlLauncher.launch(product['video_preview_url']),
+                                icon: const Icon(Icons.play_circle_outline, size: 16, color: Colors.redAccent),
+                                label: const Text('Video Preview', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                                style: OutlinedButton.styleFrom(
+                                  side: const BorderSide(color: Colors.redAccent),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
                       if (product['is_pending'] == true) ...[
                         const SizedBox(height: 12),
                         Container(
@@ -117,6 +166,51 @@ class StoreProductDetailScreen extends ConsumerWidget {
                                 style: TextStyle(color: Colors.amber.shade700, fontSize: 13, fontWeight: FontWeight.bold),
                               ),
                             ],
+                          ),
+                        ),
+                      ],
+                      if (product['screenshots'] != null && (product['screenshots'] as List).isNotEmpty) ...[
+                        const SizedBox(height: 24),
+                        const Text('Screenshots Gallery', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          height: 160,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: (product['screenshots'] as List).length,
+                            separatorBuilder: (_, __) => const SizedBox(width: 12),
+                            itemBuilder: (context, idx) {
+                              final ss = (product['screenshots'] as List)[idx];
+                              final url = ss['full_url'] ?? ss['url'];
+                              return GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (_) => Dialog(
+                                      backgroundColor: Colors.transparent,
+                                      insetPadding: const EdgeInsets.all(12),
+                                      child: Stack(
+                                        alignment: Alignment.topRight,
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(12),
+                                            child: Image.network(url, fit: BoxFit.contain),
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                                            onPressed: () => Navigator.pop(context),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.network(url, width: 220, fit: BoxFit.cover),
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ],

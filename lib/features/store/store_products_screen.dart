@@ -149,6 +149,24 @@ class StoreProductsScreen extends ConsumerWidget {
                         ),
                     ],
                   ),
+                  if (product['rating'] != null && (product['rating'] as num) > 0) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(Icons.star_rounded, size: 14, color: Colors.amber),
+                        const SizedBox(width: 2),
+                        Text(
+                          '${product['rating']}',
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Colors.amber),
+                        ),
+                        if (product['reviews_count'] != null && (product['reviews_count'] as num) > 0)
+                          Text(
+                            ' (${product['reviews_count']})',
+                            style: const TextStyle(color: Colors.grey, fontSize: 10),
+                          ),
+                      ],
+                    ),
+                  ],
                   if (product['downloads_count'] != null && (product['downloads_count'] as num) > 0) ...[
                     const SizedBox(height: 6),
                     Row(

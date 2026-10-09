@@ -30,6 +30,7 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
   List<StatusModel> _suggestedVideos = [];
   bool _isFollowing = false;
   bool _isSaved = false;
+  CommentModel? _replyingTo;
 
   @override
   void initState() {
@@ -97,18 +98,24 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
     setState(() => _isSubmitting = true);
 
     bool success = false;
+    String? errorMsg;
     try {
+      final payload = <String, dynamic>{'text': text};
+      if (_replyingTo != null) {
+        payload['parent_id'] = _replyingTo!.id;
+      }
       final response = await ApiClient.instance.post(
         '/statuses/${widget.status.id}/comments',
-        data: {'text': text},
+        data: payload,
       );
       if (response.data != null && response.data['comment'] != null) {
-        final newComment = CommentModel.fromJson(response.data['comment']);
-        setState(() {
-          _comments = [newComment, ..._comments];
-        });
         success = true;
       }
+    } on DioException catch (dioErr) {
+      if (dioErr.response?.data != null && dioErr.response?.data['message'] != null) {
+        errorMsg = dioErr.response?.data['message'].toString();
+      }
+      success = false;
     } catch (_) {
       success = false;
     }
@@ -119,10 +126,12 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
 
     if (success) {
       _commentController.clear();
+      setState(() => _replyingTo = null);
+      _loadComments();
       FocusScope.of(context).unfocus();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to add comment. Please try again.')),
+        SnackBar(content: Text(errorMsg ?? 'Failed to add comment. Please try again.')),
       );
     }
   }
@@ -441,29 +450,61 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
               padding: const EdgeInsets.all(12),
               color: const Color(0xFF1D2333),
               child: SafeArea(
-                child: Row(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _commentController,
-                        style: const TextStyle(color: Colors.white, fontSize: 14),
-                        decoration: InputDecoration(
-                          hintText: 'اكتب تعليقاً...',
-                          hintStyle: const TextStyle(color: Colors.white38),
-                          filled: true,
-                          fillColor: const Color(0xFF151924),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    if (_replyingTo != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        margin: const EdgeInsets.only(bottom: 8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF151924),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFF615DFA).withValues(alpha: 0.3)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.reply, size: 14, color: Color(0xFF615DFA)),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                'الرد على @${_replyingTo!.user?.username ?? "user"}',
+                                style: const TextStyle(color: Colors.white70, fontSize: 12),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () => setState(() => _replyingTo = null),
+                              child: const Icon(Icons.close, size: 16, color: Colors.white54),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    _isSubmitting
-                        ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF615DFA)))
-                        : IconButton(
-                            icon: const Icon(Icons.send, color: Color(0xFF615DFA)),
-                            onPressed: _submitComment,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _commentController,
+                            style: const TextStyle(color: Colors.white, fontSize: 14),
+                            decoration: InputDecoration(
+                              hintText: _replyingTo != null ? 'اكتب رداً...' : 'اكتب تعليقاً...',
+                              hintStyle: const TextStyle(color: Colors.white38),
+                              filled: true,
+                              fillColor: const Color(0xFF151924),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            ),
                           ),
+                        ),
+                        const SizedBox(width: 8),
+                        _isSubmitting
+                            ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF615DFA)))
+                            : IconButton(
+                                icon: const Icon(Icons.send, color: Color(0xFF615DFA)),
+                                onPressed: _submitComment,
+                              ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -552,10 +593,39 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                               textDirection: _isArabic(comment.text) ? TextDirection.rtl : TextDirection.ltr,
                             ),
                             const SizedBox(height: 4),
-                            Text(
-                              comment.dateFormatted,
-                              style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodySmall?.color),
+                            Row(
+                              children: [
+                                Text(
+                                  comment.dateFormatted,
+                                  style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodySmall?.color),
+                                ),
+                                const SizedBox(width: 12),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() => _replyingTo = comment);
+                                  },
+                                  child: Text('Reply', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary)),
+                                ),
+                              ],
                             ),
+                            if (comment.replies.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 12.0, top: 6.0),
+                                child: Column(
+                                  children: comment.replies.map((reply) => ListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    leading: HexagonAvatar(
+                                      avatarUrl: reply.user?.avatarUrl ?? '',
+                                      size: 26.0,
+                                      borderWidth: 1.0,
+                                      profileBadgeColor: reply.user?.profileBadgeColor,
+                                      isVerified: reply.user?.isVerified ?? false,
+                                    ),
+                                    title: Text(reply.user?.name ?? reply.user?.username ?? 'Unknown', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                                    subtitle: Text(reply.text),
+                                  )).toList(),
+                                ),
+                              ),
                           ],
                         ),
                       )),
@@ -575,39 +645,70 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
               ],
             ),
             child: SafeArea(
-              child: Row(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _commentController,
-                      decoration: InputDecoration(
-                        hintText: 'Write a comment...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                        fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  if (_replyingTo != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      margin: const EdgeInsets.only(bottom: 6),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                      maxLines: null,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  _isSubmitting
-                      ? const Padding(
-                          padding: EdgeInsets.all(12.0),
-                          child: SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                      child: Row(
+                        children: [
+                          Icon(Icons.reply, size: 14, color: Theme.of(context).colorScheme.primary),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              'Replying to @${_replyingTo!.user?.username ?? "user"}',
+                              style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurface),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
-                        )
-                      : IconButton(
-                          icon: const Icon(Icons.send),
-                          color: Theme.of(context).colorScheme.primary,
-                          onPressed: _submitComment,
+                          InkWell(
+                            onTap: () => setState(() => _replyingTo = null),
+                            child: const Icon(Icons.close, size: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _commentController,
+                          decoration: InputDecoration(
+                            hintText: _replyingTo != null ? 'Write a reply...' : 'Write a comment...',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide: BorderSide.none,
+                            ),
+                            filled: true,
+                            fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          ),
+                          maxLines: null,
                         ),
+                      ),
+                      const SizedBox(width: 8),
+                      _isSubmitting
+                          ? const Padding(
+                              padding: EdgeInsets.all(12.0),
+                              child: SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                            )
+                          : IconButton(
+                              icon: const Icon(Icons.send),
+                              color: Theme.of(context).colorScheme.primary,
+                              onPressed: _submitComment,
+                            ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -716,55 +817,79 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
     );
   }
 
-  Widget _buildDarkCommentTile(CommentModel comment) {
+  Widget _buildDarkCommentTile(CommentModel comment, {bool isNested = false}) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: EdgeInsets.only(bottom: 10, left: isNested ? 28.0 : 0.0),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF1D2333),
+        color: isNested ? const Color(0xFF161A26) : const Color(0xFF1D2333),
         borderRadius: BorderRadius.circular(12),
+        border: isNested ? Border.all(color: Colors.white.withValues(alpha: 0.05)) : null,
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          HexagonAvatar(
-            avatarUrl: comment.user?.avatarUrl ?? '',
-            size: 32,
-            borderWidth: 1.0,
-            profileBadgeColor: comment.user?.profileBadgeColor,
-            isVerified: comment.user?.isVerified ?? false,
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              HexagonAvatar(
+                avatarUrl: comment.user?.avatarUrl ?? '',
+                size: isNested ? 26 : 32,
+                borderWidth: 1.0,
+                profileBadgeColor: comment.user?.profileBadgeColor,
+                isVerified: comment.user?.isVerified ?? false,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      comment.user?.name ?? comment.user?.username ?? 'Unknown',
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                    Row(
+                      children: [
+                        Text(
+                          comment.user?.name ?? comment.user?.username ?? 'Unknown',
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: isNested ? 12 : 13),
+                        ),
+                        if (comment.user?.isVerified == true) ...[
+                          const SizedBox(width: 4),
+                          const Icon(Icons.verified, color: Color(0xFF00B2FF), size: 12),
+                        ],
+                      ],
                     ),
-                    if (comment.user?.isVerified == true) ...[
-                      const SizedBox(width: 4),
-                      const Icon(Icons.verified, color: Color(0xFF00B2FF), size: 12),
-                    ],
+                    const SizedBox(height: 4),
+                    FormattedContentWidget(
+                      content: comment.text,
+                      fontSize: isNested ? 12.0 : 13.0,
+                      style: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Text(
+                          comment.dateFormatted,
+                          style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 11),
+                        ),
+                        const SizedBox(width: 12),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() => _replyingTo = comment);
+                          },
+                          child: const Text(
+                            'رد',
+                            style: TextStyle(color: Color(0xFF615DFA), fontSize: 11, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-                const SizedBox(height: 4),
-                FormattedContentWidget(
-                  content: comment.text,
-                  fontSize: 13.0,
-                  style: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  comment.dateFormatted,
-                  style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 11),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
+          if (comment.replies.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            ...comment.replies.map((reply) => _buildDarkCommentTile(reply, isNested: true)),
+          ],
         ],
       ),
     );

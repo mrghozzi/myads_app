@@ -178,7 +178,7 @@ class StoreProductDetailScreen extends ConsumerWidget {
                           child: ListView.separated(
                             scrollDirection: Axis.horizontal,
                             itemCount: (product['screenshots'] as List).length,
-                            separatorBuilder: (_, __) => const SizedBox(width: 12),
+                            separatorBuilder: (_, _) => const SizedBox(width: 12),
                             itemBuilder: (context, idx) {
                               final ss = (product['screenshots'] as List)[idx];
                               final url = ss['full_url'] ?? ss['url'];

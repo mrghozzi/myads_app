@@ -209,6 +209,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                 title: const Text('Report Post'),
                 onTap: () {
                   Navigator.pop(context);
+                  _showReportDialog(context);
                 },
               ),
               ListTile(
@@ -222,6 +223,104 @@ class _PostCardState extends ConsumerState<PostCard> {
           ),
         );
       },
+    );
+  }
+
+  void _showReportDialog(BuildContext context) {
+    String selectedCategory = 'spam';
+    final reasonController = TextEditingController();
+    bool isSubmitting = false;
+
+    showDialog(
+      context: context,
+      builder: (dialogCtx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Row(
+            children: [
+              Icon(Icons.flag_outlined, color: Colors.red),
+              SizedBox(width: 8),
+              Text('Report Post', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Violation Category', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                const SizedBox(height: 6),
+                DropdownButtonFormField<String>(
+                  initialValue: selectedCategory,
+                  isExpanded: true,
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: 'spam', child: Text('Spam')),
+                    DropdownMenuItem(value: 'harassment', child: Text('Harassment')),
+                    DropdownMenuItem(value: 'inappropriate', child: Text('Inappropriate Content')),
+                    DropdownMenuItem(value: 'copyright', child: Text('Copyright Violation')),
+                    DropdownMenuItem(value: 'misinformation', child: Text('Misinformation')),
+                    DropdownMenuItem(value: 'scam', child: Text('Scam / Fraud')),
+                    DropdownMenuItem(value: 'other', child: Text('Other')),
+                  ],
+                  onChanged: (val) {
+                    if (val != null) setDialogState(() => selectedCategory = val);
+                  },
+                ),
+                const SizedBox(height: 14),
+                const Text('Reason / Details', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: reasonController,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    hintText: 'Please describe the violation...',
+                    hintStyle: const TextStyle(fontSize: 13),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogCtx),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: isSubmitting
+                  ? null
+                  : () async {
+                      final reason = reasonController.text.trim();
+                      if (reason.isEmpty) return;
+                      setDialogState(() => isSubmitting = true);
+                      try {
+                        final res = await PostsRepository().reportStatus(widget.status.id, selectedCategory, reason);
+                        if (dialogCtx.mounted) Navigator.pop(dialogCtx);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(res['message']?.toString() ?? 'Report submitted successfully.')),
+                          );
+                        }
+                      } catch (e) {
+                        setDialogState(() => isSubmitting = false);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Failed to submit report. Please try again.')),
+                          );
+                        }
+                      }
+                    },
+              child: isSubmitting
+                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Text('Submit Report'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

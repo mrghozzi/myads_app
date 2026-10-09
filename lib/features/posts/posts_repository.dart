@@ -75,5 +75,16 @@ class PostsRepository {
     }
     return [];
   }
+
+  /// Report a post to moderation suite
+  Future<Map<String, dynamic>> reportStatus(int statusId, String category, String reason) async {
+    final response = await _dio.post('/statuses/$statusId/report', data: {
+      'category': category,
+      'reason': reason,
+    });
+    return response.data is Map<String, dynamic>
+        ? response.data as Map<String, dynamic>
+        : Map<String, dynamic>.from(response.data as Map);
+  }
 }
 

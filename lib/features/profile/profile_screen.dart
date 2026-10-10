@@ -654,28 +654,69 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> with SingleTicker
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Bio Card
-                            _buildAboutSectionTitle('About Me'),
-                            const SizedBox(height: 8),
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: isDark 
-                                    ? Colors.white.withValues(alpha: 0.03) 
-                                    : Colors.black.withValues(alpha: 0.02),
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
+                            if (!profile.canViewAbout) ...[
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 24),
+                                decoration: BoxDecoration(
                                   color: isDark 
-                                      ? Colors.white.withValues(alpha: 0.05) 
-                                      : Colors.black.withValues(alpha: 0.05),
+                                      ? Colors.white.withValues(alpha: 0.03) 
+                                      : Colors.black.withValues(alpha: 0.02),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: isDark 
+                                        ? Colors.white.withValues(alpha: 0.05) 
+                                        : Colors.black.withValues(alpha: 0.05),
+                                  ),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(14),
+                                      decoration: BoxDecoration(
+                                        color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.04),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(Icons.lock_outline, size: 32, color: Colors.grey[500]),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    const Text(
+                                      'This section is private',
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      'The member has restricted visibility of their about section.',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              child: Text(
-                                profile.bio.isNotEmpty ? profile.bio : 'No bio information provided.',
-                                style: const TextStyle(fontSize: 15, height: 1.4),
+                            ] else ...[
+                              // Bio Card
+                              _buildAboutSectionTitle('About Me'),
+                              const SizedBox(height: 8),
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: isDark 
+                                      ? Colors.white.withValues(alpha: 0.03) 
+                                      : Colors.black.withValues(alpha: 0.02),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: isDark 
+                                        ? Colors.white.withValues(alpha: 0.05) 
+                                        : Colors.black.withValues(alpha: 0.05),
+                                  ),
+                                ),
+                                child: Text(
+                                  profile.bio.isNotEmpty ? profile.bio : 'No bio information provided.',
+                                  style: const TextStyle(fontSize: 15, height: 1.4),
+                                ),
                               ),
-                            ),
+                            ],
                             
                             const SizedBox(height: 20),
 

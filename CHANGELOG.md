@@ -1,5 +1,23 @@
 # MYADS Mobile App — Changelog
 
+## v1.8.3+25
+> **Profile Privacy Engine & About Tab Synchronisation** — Enhanced user profile privacy architecture and mobile compatibility with MYADS core v4.6.3. Integrated privacy-aware profile deserialization (`canViewAbout`, `aboutVisibility`), private state locked container for protected about sections, and added the inline `about_visibility` dropdown selector to Profile Settings.
+
+### Profile Privacy & About Tab
+* **Profile Privacy Support (`user_profile_model.dart`, `profile_screen.dart`)**:
+  - Added `canViewAbout` and `aboutVisibility` to `UserProfileModel`.
+  - Added locked container with privacy lock icon and informative notice when a member restricts their About section (`public`, `followers`, `private`).
+  - Safe bio handling ensuring non-authorized requests receive no leaked bio text over the API.
+* **Profile Settings (`profile_settings_screen.dart`)**:
+  - Added `about_visibility` selector dropdown (Public, Followers Only, Private) directly in profile edit screen.
+* **Resilient Environment Loader (`url_helper.dart`)**:
+  - Added safety check for `dotenv.isInitialized` before accessing environment variables, preventing initialization exceptions during tests.
+* **Testing & Quality Assurance**:
+  - Added unit test cases for profile privacy deserialization.
+  - Verified 0 issues on `flutter analyze` and 100% test pass on `flutter test`.
+
+---
+
 ## v1.8.2+24
 > **Store Marketplace Ratings & Reviews System, Screenshots Lightbox Gallery, and Live Demo / Video Previews Release** — Synchronized `myads_app` with the enhanced MYADS Store Marketplace. Introduced product star ratings and review badges across product cards, detailed 5-star customer reviews with verified buyer badges and rating distribution progress bars on product details, interactive screenshots carousel with full-screen zoomable lightbox viewer, and direct launcher integration for Live Demo previews and video walkthroughs.
 

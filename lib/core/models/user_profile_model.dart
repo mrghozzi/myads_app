@@ -38,6 +38,8 @@ class UserProfileModel {
   final double pts;
   final bool verified;
   final String bio;
+  final bool canViewAbout;
+  final String aboutVisibility;
   final int followersCount;
   final int followingCount;
   final int postsCount;
@@ -58,6 +60,8 @@ class UserProfileModel {
     required this.pts,
     required this.verified,
     required this.bio,
+    this.canViewAbout = true,
+    this.aboutVisibility = 'public',
     required this.followersCount,
     required this.followingCount,
     required this.postsCount,
@@ -102,6 +106,8 @@ class UserProfileModel {
       pts: json['pts'] is num ? (json['pts'] as num).toDouble() : double.tryParse(json['pts']?.toString() ?? '0.0') ?? 0.0,
       verified: json['verified'] == true || json['verified'] == 1 || json['verified'] == '1',
       bio: json['bio']?.toString() ?? '',
+      canViewAbout: json['can_view_about'] == null ? true : (json['can_view_about'] == true || json['can_view_about'] == 1 || json['can_view_about'] == '1'),
+      aboutVisibility: json['about_visibility']?.toString() ?? 'public',
       followersCount: json['followers_count'] is int ? json['followers_count'] : int.tryParse(json['followers_count']?.toString() ?? '0') ?? 0,
       followingCount: json['following_count'] is int ? json['following_count'] : int.tryParse(json['following_count']?.toString() ?? '0') ?? 0,
       postsCount: json['posts_count'] is int ? json['posts_count'] : int.tryParse(json['posts_count']?.toString() ?? '0') ?? 0,

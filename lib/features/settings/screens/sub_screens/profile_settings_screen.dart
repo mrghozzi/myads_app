@@ -16,6 +16,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _aboutController = TextEditingController();
+  String _aboutVisibility = 'public';
 
   @override
   void initState() {
@@ -29,6 +30,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       if (res.data != null) {
         _emailController.text = res.data['email'] ?? '';
         _aboutController.text = res.data['about_me'] ?? '';
+        _aboutVisibility = res.data['about_visibility']?.toString() ?? 'public';
       }
     } catch (e) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
@@ -44,6 +46,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       await ApiClient.instance.post('/settings/profile', data: {
         'about_me': _aboutController.text,
         'email': _emailController.text,
+        'about_visibility': _aboutVisibility,
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Saved successfully'), backgroundColor: Colors.green));
@@ -70,7 +73,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                 child: ListView(
                   children: [
                     TextFormField(
-                      controller: _emailController,
+                       controller: _emailController,
                       decoration: const InputDecoration(labelText: 'Email Address', border: OutlineInputBorder()),
                       enabled: false,
                     ),
@@ -79,6 +82,23 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                       controller: _aboutController,
                       decoration: const InputDecoration(labelText: 'About Me / Signature', border: OutlineInputBorder()),
                       maxLines: 4,
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      initialValue: _aboutVisibility,
+                      decoration: const InputDecoration(
+                        labelText: 'About & Bio Visibility',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.shield_outlined),
+                      ),
+                      items: const [
+                        DropdownMenuItem(value: 'public', child: Text('Public (Everyone)')),
+                        DropdownMenuItem(value: 'followers', child: Text('Followers Only')),
+                        DropdownMenuItem(value: 'private', child: Text('Private (Only Me)')),
+                      ],
+                      onChanged: (val) {
+                        if (val != null) setState(() => _aboutVisibility = val);
+                      },
                     ),
                     const SizedBox(height: 24),
                     ElevatedButton(

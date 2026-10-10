@@ -7,7 +7,7 @@ class UrlHelper {
     if (url.isEmpty) return url;
 
     // Get BASE_URL from environment variables (e.g. http://192.168.1.163/myads/api)
-    final baseUrl = dotenv.env['BASE_URL'] ?? '';
+    final baseUrl = dotenv.isInitialized ? (dotenv.env['BASE_URL'] ?? '') : '';
     if (baseUrl.isEmpty) return url;
 
     // Extract the site base URL by removing '/api' or '/api/'

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:myads_app/core/models/status_model.dart';
 import 'package:myads_app/core/models/user_model.dart';
+import 'package:myads_app/core/models/user_profile_model.dart';
 import 'package:myads_app/core/providers/saved_posts_provider.dart';
 import 'package:myads_app/features/posts/widgets/smart_autocomplete_overlay.dart';
 
@@ -117,4 +118,63 @@ void main() {
       expect(find.byType(SmartAutocompleteOverlay), findsOneWidget);
     });
   });
+
+  group('UserProfileModel Privacy Tests', () {
+    test('UserProfileModel parses can_view_about and about_visibility correctly', () {
+      final json = {
+        'id': '5',
+        'username': 'privacyuser',
+        'name': 'Privacy User',
+        'avatar': 'https://example.com/avatar.jpg',
+        'pts': 100,
+        'verified': true,
+        'bio': '',
+        'can_view_about': false,
+        'about_visibility': 'private',
+        'followers_count': 0,
+        'following_count': 0,
+        'posts_count': 3,
+        'created_at': '2026-10-10',
+        'online': false,
+        'cover': 'upload/cover.jpg',
+        'is_following': false,
+        'social_links': {},
+        'badges': [],
+        'profile_badge_color': '',
+      };
+
+      final profile = UserProfileModel.fromJson(json);
+      expect(profile.canViewAbout, false);
+      expect(profile.aboutVisibility, 'private');
+      expect(profile.bio, '');
+    });
+
+    test('UserProfileModel defaults canViewAbout to true when not provided', () {
+      final json = {
+        'id': '6',
+        'username': 'normaluser',
+        'name': 'Normal User',
+        'avatar': 'https://example.com/avatar.jpg',
+        'pts': 50,
+        'verified': false,
+        'bio': 'Public Bio Text',
+        'followers_count': 10,
+        'following_count': 5,
+        'posts_count': 1,
+        'created_at': '2026-10-10',
+        'online': true,
+        'cover': 'upload/cover.jpg',
+        'is_following': true,
+        'social_links': {},
+        'badges': [],
+        'profile_badge_color': '',
+      };
+
+      final profile = UserProfileModel.fromJson(json);
+      expect(profile.canViewAbout, true);
+      expect(profile.aboutVisibility, 'public');
+      expect(profile.bio, 'Public Bio Text');
+    });
+  });
 }
+

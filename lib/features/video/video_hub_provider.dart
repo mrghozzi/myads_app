@@ -6,6 +6,9 @@ import '../../core/network/api_client.dart';
 class VideoHubState {
   final String filter;
   final String searchQuery;
+  final String? selectedCategory;
+  final String selectedSort;
+  final List<Map<String, dynamic>> categories;
   final StatusModel? spotlightVideo;
   final List<StatusModel> clips;
   final List<StatusModel> videos;
@@ -18,6 +21,9 @@ class VideoHubState {
   VideoHubState({
     required this.filter,
     required this.searchQuery,
+    this.selectedCategory,
+    this.selectedSort = 'latest',
+    this.categories = const [],
     this.spotlightVideo,
     required this.clips,
     required this.videos,
@@ -32,6 +38,9 @@ class VideoHubState {
     return VideoHubState(
       filter: 'all',
       searchQuery: '',
+      selectedCategory: null,
+      selectedSort: 'latest',
+      categories: const [],
       spotlightVideo: null,
       clips: [],
       videos: [],
@@ -46,6 +55,10 @@ class VideoHubState {
   VideoHubState copyWith({
     String? filter,
     String? searchQuery,
+    String? selectedCategory,
+    bool clearCategory = false,
+    String? selectedSort,
+    List<Map<String, dynamic>>? categories,
     StatusModel? spotlightVideo,
     bool clearSpotlight = false,
     List<StatusModel>? clips,
@@ -59,6 +72,9 @@ class VideoHubState {
     return VideoHubState(
       filter: filter ?? this.filter,
       searchQuery: searchQuery ?? this.searchQuery,
+      selectedCategory: clearCategory ? null : (selectedCategory ?? this.selectedCategory),
+      selectedSort: selectedSort ?? this.selectedSort,
+      categories: categories ?? this.categories,
       spotlightVideo: clearSpotlight ? null : (spotlightVideo ?? this.spotlightVideo),
       clips: clips ?? this.clips,
       videos: videos ?? this.videos,
@@ -78,23 +94,42 @@ class VideoHubNotifier extends Notifier<VideoHubState> {
     return VideoHubState.initial();
   }
 
-  Future<void> loadInitial({String? filter, String? query}) async {
+  Future<void> loadInitial({
+    String? filter,
+    String? query,
+    String? category,
+    bool clearCategory = false,
+    String? sort,
+  }) async {
     final activeFilter = filter ?? state.filter;
     final activeQuery = query ?? state.searchQuery;
+    final activeCategory = clearCategory ? null : (category ?? state.selectedCategory);
+    final activeSort = sort ?? state.selectedSort;
 
     state = state.copyWith(
       filter: activeFilter,
       searchQuery: activeQuery,
+      selectedCategory: activeCategory,
+      clearCategory: clearCategory,
+      selectedSort: activeSort,
       isLoading: true,
       error: null,
     );
 
     try {
-      final response = await ApiClient.instance.get('/video/feed', queryParameters: {
+      final Map<String, dynamic> queryParams = {
         'filter': activeFilter,
         'q': activeQuery,
         'page': 1,
-      });
+      };
+      if (activeCategory != null && activeCategory.isNotEmpty) {
+        queryParams['cat'] = activeCategory;
+      }
+      if (activeSort.isNotEmpty) {
+        queryParams['sort'] = activeSort;
+      }
+
+      final response = await ApiClient.instance.get('/video/feed', queryParameters: queryParams);
 
       final data = response.data;
       if (data is! Map) {
@@ -108,6 +143,10 @@ class VideoHubNotifier extends Notifier<VideoHubState> {
       // Parse videos
       final List videosJson = data['videos'] ?? [];
       final videos = videosJson.map((e) => StatusModel.fromJson(e)).toList();
+
+      // Parse categories
+      final List categoriesJson = data['categories'] ?? [];
+      final categories = categoriesJson.map((e) => Map<String, dynamic>.from(e as Map)).toList();
 
       // Parse spotlight video
       StatusModel? spotlight;
@@ -130,6 +169,7 @@ class VideoHubNotifier extends Notifier<VideoHubState> {
         clearSpotlight: spotlight == null,
         clips: clips,
         videos: videos,
+        categories: categories.isNotEmpty ? categories : state.categories,
         currentPage: currentPage,
         hasMore: hasMore,
         isLoading: false,
@@ -156,11 +196,19 @@ class VideoHubNotifier extends Notifier<VideoHubState> {
     final nextPage = state.currentPage + 1;
 
     try {
-      final response = await ApiClient.instance.get('/video/feed', queryParameters: {
+      final Map<String, dynamic> queryParams = {
         'filter': state.filter,
         'q': state.searchQuery,
         'page': nextPage,
-      });
+      };
+      if (state.selectedCategory != null && state.selectedCategory!.isNotEmpty) {
+        queryParams['cat'] = state.selectedCategory;
+      }
+      if (state.selectedSort.isNotEmpty) {
+        queryParams['sort'] = state.selectedSort;
+      }
+
+      final response = await ApiClient.instance.get('/video/feed', queryParameters: queryParams);
 
       final data = response.data;
       if (data is! Map) return;
@@ -190,6 +238,19 @@ class VideoHubNotifier extends Notifier<VideoHubState> {
   void setFilter(String filter) {
     if (state.filter == filter) return;
     loadInitial(filter: filter);
+  }
+
+  void setCategory(String? categoryId) {
+    if (state.selectedCategory == categoryId) {
+      loadInitial(clearCategory: true);
+    } else {
+      loadInitial(category: categoryId);
+    }
+  }
+
+  void setSort(String sort) {
+    if (state.selectedSort == sort) return;
+    loadInitial(sort: sort);
   }
 
   void setSearchQuery(String query) {

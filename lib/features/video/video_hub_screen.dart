@@ -73,6 +73,12 @@ class _VideoHubScreenState extends ConsumerState<VideoHubScreen> {
                 child: _buildFilterPills(state.filter),
               ),
 
+              // Category Pills (if available)
+              if (state.categories.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: _buildCategoryPills(state.categories, state.selectedCategory),
+                ),
+
               // Loading State
               if (state.isLoading)
                 const SliverFillRemaining(
@@ -120,10 +126,48 @@ class _VideoHubScreenState extends ConsumerState<VideoHubScreen> {
                           ),
                         ),
                         const Spacer(),
+                        PopupMenuButton<String>(
+                          initialValue: state.selectedSort,
+                          onSelected: (val) {
+                            ref.read(videoHubProvider.notifier).setSort(val);
+                          },
+                          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                          itemBuilder: (context) => [
+                            const PopupMenuItem(value: 'latest', child: Text('Latest')),
+                            const PopupMenuItem(value: 'views', child: Text('Most Viewed')),
+                            const PopupMenuItem(value: 'reactions', child: Text('Most Reacted')),
+                            const PopupMenuItem(value: 'oldest', child: Text('Oldest')),
+                          ],
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.sort_rounded, size: 14, color: isDark ? Colors.white70 : Colors.black87),
+                                const SizedBox(width: 4),
+                                Text(
+                                  state.selectedSort == 'views'
+                                      ? 'Views'
+                                      : (state.selectedSort == 'reactions'
+                                          ? 'Reactions'
+                                          : (state.selectedSort == 'oldest' ? 'Oldest' : 'Latest')),
+                                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: isDark ? Colors.white70 : Colors.black87),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
                         Text(
                           '${state.videos.length} videos',
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: 12,
                             color: isDark ? Colors.white54 : Colors.black54,
                           ),
                         ),
@@ -334,6 +378,82 @@ class _VideoHubScreenState extends ConsumerState<VideoHubScreen> {
     );
   }
 
+  Widget _buildCategoryPills(List<Map<String, dynamic>> categories, String? selectedCategory) {
+    return Container(
+      height: 38,
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: categories.length + 1,
+        separatorBuilder: (context, index) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            final isAll = selectedCategory == null;
+            return GestureDetector(
+              onTap: () {
+                ref.read(videoHubProvider.notifier).setCategory(null);
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: isAll ? const Color(0xFF615DFA) : Colors.white.withValues(alpha: 0.06),
+                  border: Border.all(
+                    color: isAll ? Colors.transparent : Colors.white.withValues(alpha: 0.1),
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    'All Categories',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: isAll ? FontWeight.bold : FontWeight.normal,
+                      color: isAll ? Colors.white : Colors.white70,
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
+
+          final cat = categories[index - 1];
+          final catId = cat['id'].toString();
+          final isSelected = selectedCategory == catId;
+
+          return GestureDetector(
+            onTap: () {
+              ref.read(videoHubProvider.notifier).setCategory(catId);
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: isSelected ? const Color(0xFF615DFA) : Colors.white.withValues(alpha: 0.06),
+                border: Border.all(
+                  color: isSelected ? Colors.transparent : Colors.white.withValues(alpha: 0.1),
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  cat['name']?.toString() ?? '',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    color: isSelected ? Colors.white : Colors.white70,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   Widget _buildSpotlightBanner(BuildContext context, StatusModel status) {
     final thumbUrl = status.videoThumbnail ?? status.displayImage;
     final title = status.videoTitle ?? status.text;
@@ -342,7 +462,7 @@ class _VideoHubScreenState extends ConsumerState<VideoHubScreen> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       child: GestureDetector(
-        onTap: () => context.push('/post', extra: status),
+        onTap: () => context.push('/video/watch/${status.id}', extra: status),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
@@ -511,7 +631,7 @@ class _VideoHubScreenState extends ConsumerState<VideoHubScreen> {
               final thumb = clip.videoThumbnail ?? clip.displayImage;
 
               return GestureDetector(
-                onTap: () => context.push('/post', extra: clip),
+                onTap: () => context.push('/video/watch/${clip.id}', extra: clip),
                 child: Container(
                   width: 125,
                   decoration: BoxDecoration(
@@ -604,7 +724,7 @@ class _VideoHubScreenState extends ConsumerState<VideoHubScreen> {
     final title = video.videoTitle ?? video.text;
 
     return GestureDetector(
-      onTap: () => context.push('/post', extra: video),
+      onTap: () => context.push('/video/watch/${video.id}', extra: video),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),

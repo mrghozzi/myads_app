@@ -150,8 +150,36 @@ final appRouter = GoRouter(
       path: '/post',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) {
-        final status = state.extra as StatusModel;
-        return PostDetailsScreen(status: status);
+        final extra = state.extra;
+        if (extra is StatusModel) {
+          return PostDetailsScreen(status: extra);
+        }
+        final id = int.tryParse(state.uri.queryParameters['id'] ?? '') ?? 0;
+        return PostDetailsScreen(statusId: id);
+      },
+    ),
+    GoRoute(
+      path: '/video/watch/:id',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final id = int.tryParse(state.pathParameters['id'] ?? '') ?? 0;
+        final extra = state.extra;
+        if (extra is StatusModel) {
+          return PostDetailsScreen(status: extra);
+        }
+        return PostDetailsScreen(statusId: id);
+      },
+    ),
+    GoRoute(
+      path: '/video/:id',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final id = int.tryParse(state.pathParameters['id'] ?? '') ?? 0;
+        final extra = state.extra;
+        if (extra is StatusModel) {
+          return PostDetailsScreen(status: extra);
+        }
+        return PostDetailsScreen(statusId: id);
       },
     ),
     GoRoute(

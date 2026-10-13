@@ -1,5 +1,25 @@
 # MYADS Mobile App — Changelog
 
+## v1.8.5+27
+> **Video Hub & Cinema Watch Page Parity Release** — Synchronized `myads_app` with the reconstructed Video Hub and standalone Cinema Watch pages. Added dynamic category choice pills, multi-criteria sorting menu (Latest, Most Viewed, Most Reacted, Oldest), shorts filter alias support, dedicated `/video/watch/:id` and `/video/:id` routes, and resilient video post loading by ID.
+
+### Video Hub & Cinema Watch
+* **Dynamic Category Filtering (`video_hub_screen.dart`, `video_hub_provider.dart`)**:
+  - Added horizontal scrollable category filter pills loaded dynamically from backend API (`/api/video/feed`).
+  - Added 1-tap category toggling with active gradient state and "All Categories" default reset.
+* **Multi-Criteria Video Sorting (`video_hub_screen.dart`, `video_hub_provider.dart`)**:
+  - Added interactive sort menu supporting: **Latest**, **Most Viewed**, **Most Reacted**, and **Oldest**.
+  - Synchronized query parameters (`sort`, `cat`, `filter`, `q`) across pagination requests.
+* **Cinema Video Watch & Direct Routing (`app_router.dart`, `post_details_screen.dart`)**:
+  - Added direct GoRoute declarations for `/video/watch/:id` and `/video/:id`.
+  - Upgraded `PostDetailsScreen` to support loading videos directly by `statusId` via `/api/video/watch/:id` or `/api/statuses/:id`.
+  - Updated video card and shelf tap handlers to navigate directly via `/video/watch/:id`.
+* **Verification & Testing**:
+  - Verified 0 issues on `flutter analyze`.
+  - Verified 100% test pass on `flutter test`.
+
+---
+
 ## v1.8.4+26
 > **Modern Forum Architecture & Full Core v4.6.3 Parity** — Synchronized `myads_app` with the modernized MyAds forum engine. Introduced hierarchical sub-forums with custom color indicators, dynamic topic stream filters (Latest, Top, Newest, Unanswered) with debounced search, threaded discussion comments tree, pinned comments, best answer highlights, and a modern Markdown composer with quick formatting tools.
 

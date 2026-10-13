@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../core/models/status_model.dart';
+import '../../core/models/user_model.dart';
 import '../../core/models/comment_model.dart';
 import '../../core/network/api_client.dart';
 import '../posts/posts_repository.dart';
@@ -12,9 +13,11 @@ import '../../core/widgets/formatted_content_widget.dart';
 import 'widgets/video_player_widget.dart';
 
 class PostDetailsScreen extends StatefulWidget {
-  final StatusModel status;
+  final StatusModel? status;
+  final int? statusId;
 
-  const PostDetailsScreen({super.key, required this.status});
+  const PostDetailsScreen({super.key, this.status, this.statusId})
+      : assert(status != null || statusId != null, 'Either status or statusId must be provided');
 
   @override
   State<PostDetailsScreen> createState() => _PostDetailsScreenState();
@@ -23,6 +26,7 @@ class PostDetailsScreen extends StatefulWidget {
 class _PostDetailsScreenState extends State<PostDetailsScreen> {
   final TextEditingController _commentController = TextEditingController();
   late StatusModel _currentStatus;
+  bool _isLoaded = false;
   bool _isSubmitting = false;
   bool _isLoading = true;
   String? _error;
@@ -35,28 +39,70 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    _currentStatus = widget.status;
-    _isFollowing = _currentStatus.isFollowing;
-    _isSaved = _currentStatus.hasSaved;
-    _suggestedVideos = _currentStatus.suggestedVideos ?? [];
+    if (widget.status != null) {
+      _currentStatus = widget.status!;
+      _isFollowing = _currentStatus.isFollowing;
+      _isSaved = _currentStatus.hasSaved;
+      _suggestedVideos = _currentStatus.suggestedVideos ?? [];
+      _isLoaded = true;
+    } else {
+      _currentStatus = StatusModel(
+        id: widget.statusId ?? 0,
+        text: '',
+        type: '10',
+        postKind: 'video',
+        createdAt: '',
+        user: UserModel(id: '0', username: '', name: '', avatarUrl: '', profileBadgeColor: '', isVerified: false),
+        likesCount: 0,
+        commentsCount: 0,
+        repostsCount: 0,
+        hasLiked: false,
+        groupedReactions: const {},
+        interactionSubjectId: widget.statusId ?? 0,
+        reactionType: 2,
+      );
+      _isLoaded = false;
+    }
 
     _loadPostDetails();
     _loadComments();
   }
 
   Future<void> _loadPostDetails() async {
+    final targetId = widget.status?.id ?? widget.statusId;
+    if (targetId == null) return;
+
     try {
-      final response = await ApiClient.instance.get('/statuses/${widget.status.id}');
-      if (response.data != null && response.data is Map<String, dynamic>) {
-        final updated = StatusModel.fromJson(response.data as Map<String, dynamic>);
+      dynamic response;
+      try {
+        response = await ApiClient.instance.get('/video/watch/$targetId');
+      } catch (_) {
+        response = await ApiClient.instance.get('/statuses/$targetId');
+      }
+
+      if (response != null && response.data != null && response.data is Map<String, dynamic>) {
+        final Map<String, dynamic> data = response.data as Map<String, dynamic>;
+        final rawStatus = data['status'] is Map ? data['status'] : data;
+        final updated = StatusModel.fromJson(rawStatus as Map<String, dynamic>);
+
+        List<StatusModel> sVideos = [];
+        if (data['suggested_videos'] != null && data['suggested_videos'] is List) {
+          sVideos = (data['suggested_videos'] as List)
+              .map((e) => StatusModel.fromJson(e as Map<String, dynamic>))
+              .toList();
+        } else if (updated.suggestedVideos != null) {
+          sVideos = updated.suggestedVideos!;
+        }
+
         if (mounted) {
           setState(() {
             _currentStatus = updated;
             _isFollowing = updated.isFollowing;
             _isSaved = updated.hasSaved;
-            if (updated.suggestedVideos != null && updated.suggestedVideos!.isNotEmpty) {
-              _suggestedVideos = updated.suggestedVideos!;
+            if (sVideos.isNotEmpty) {
+              _suggestedVideos = sVideos;
             }
+            _isLoaded = true;
           });
         }
       }
@@ -64,12 +110,15 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
   }
 
   Future<void> _loadComments() async {
+    final targetId = widget.status?.id ?? widget.statusId;
+    if (targetId == null) return;
+
     setState(() {
       _isLoading = true;
       _error = null;
     });
     try {
-      final response = await ApiClient.instance.get('/statuses/${widget.status.id}/comments');
+      final response = await ApiClient.instance.get('/statuses/$targetId/comments');
       if (response.data != null && response.data['data'] != null) {
         final List<dynamic> data = response.data['data'];
         final comments = data.map((json) => CommentModel.fromJson(json)).toList();
@@ -92,6 +141,9 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
   }
 
   void _submitComment() async {
+    final targetId = widget.status?.id ?? widget.statusId;
+    if (targetId == null) return;
+
     final text = _commentController.text.trim();
     if (text.isEmpty) return;
 
@@ -105,7 +157,7 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
         payload['parent_id'] = _replyingTo!.id;
       }
       final response = await ApiClient.instance.post(
-        '/statuses/${widget.status.id}/comments',
+        '/statuses/$targetId/comments',
         data: payload,
       );
       if (response.data != null && response.data['comment'] != null) {
@@ -168,17 +220,17 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
 
   Future<void> _toggleLike() async {
     final oldStatus = _currentStatus;
-    final wasLiked = _currentStatus.hasLiked;
+    final wasLiked = oldStatus.hasLiked;
 
     // Optimistic UI Update (< 1ms feedback)
     setState(() {
       _currentStatus = StatusModel.fromJson({
-        ..._currentStatus.media != null ? {'media': _currentStatus.media} : {},
-        'id': _currentStatus.id,
+        ...oldStatus.media != null ? {'media': oldStatus.media} : {},
+        'id': oldStatus.id,
         'has_liked': !wasLiked,
         'reactions_count': wasLiked
-            ? (_currentStatus.likesCount > 0 ? _currentStatus.likesCount - 1 : 0)
-            : _currentStatus.likesCount + 1,
+            ? (oldStatus.likesCount > 0 ? oldStatus.likesCount - 1 : 0)
+            : oldStatus.likesCount + 1,
       });
     });
 
@@ -194,15 +246,15 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
           setState(() {
             if (action == 'added') {
               _currentStatus = StatusModel.fromJson({
-                ..._currentStatus.media != null ? {'media': _currentStatus.media} : {},
-                'id': _currentStatus.id,
+                ...oldStatus.media != null ? {'media': oldStatus.media} : {},
+                'id': oldStatus.id,
                 'has_liked': true,
                 'reactions_count': oldStatus.likesCount + 1,
               });
             } else if (action == 'removed') {
               _currentStatus = StatusModel.fromJson({
-                ..._currentStatus.media != null ? {'media': _currentStatus.media} : {},
-                'id': _currentStatus.id,
+                ...oldStatus.media != null ? {'media': oldStatus.media} : {},
+                'id': oldStatus.id,
                 'has_liked': false,
                 'reactions_count': oldStatus.likesCount > 0 ? oldStatus.likesCount - 1 : 0,
               });
@@ -237,6 +289,23 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_isLoaded) {
+      return Scaffold(
+        backgroundColor: const Color(0xFF0F111A),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(color: Color(0xFF615DFA)),
+        ),
+      );
+    }
+
     final isVideoPost = _currentStatus.type == '10' || _currentStatus.postKind == 'video';
 
     if (isVideoPost) {
@@ -524,7 +593,7 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
           Expanded(
             child: ListView(
               children: [
-                PostCard(status: widget.status, isDetailView: true),
+                PostCard(status: _currentStatus, isDetailView: true),
                 const Divider(),
                 if (_isLoading)
                   const Padding(

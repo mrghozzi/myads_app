@@ -1,5 +1,33 @@
 # MYADS Mobile App — Changelog
 
+## v1.8.4+26
+> **Modern Forum Architecture & Full Core v4.6.3 Parity** — Synchronized `myads_app` with the modernized MyAds forum engine. Introduced hierarchical sub-forums with custom color indicators, dynamic topic stream filters (Latest, Top, Newest, Unanswered) with debounced search, threaded discussion comments tree, pinned comments, best answer highlights, and a modern Markdown composer with quick formatting tools.
+
+### Modern Forum Engine
+* **Forums Directory & Categories (`forums_screen.dart`)**:
+  - Added category custom color badges (`cat['color']`) and hierarchy display.
+  - Added sub-categories chips and accurate recursive topic counters.
+  - Added pull-to-refresh synchronization.
+* **Topics Stream & Filtering (`forum_topics_screen.dart`, `forums_provider.dart`)**:
+  - Added live filter choice chips: **Latest**, **Top**, **Newest**, and **Unanswered** powered by `ForumTopicsQuery`.
+  - Added debounced search bar with instant query execution.
+  - Added pinned (`fa-thumbtack`) and locked (`fa-lock`) status indicators on topic cards.
+  - Added interactive Markdown discussion creation modal with title, category selector, and syntax helpers.
+* **Discussion Details & Threaded Replies (`forum_topic_detail_screen.dart`)**:
+  - Strictly circular member avatars (`CircleAvatar`).
+  - Added highlighted cards and badges for **Pinned Comments** and **Best Answers**.
+  - Implemented true hierarchical threaded replies tree with author indentations and timestamp formatting.
+  - Added contextual "Replying to @username" indicator banner with 1-click cancel button.
+  - Added quick Markdown formatting chips (`Bold`, `Italic`, `Code`, `Quote`, `Link`) above the reply composer.
+* **State Management & Moderation Notifiers (`forums_provider.dart`)**:
+  - Implemented `replyTopic(topicId, content, {int? parentId})` supporting parent-child reply linking.
+  - Added moderation methods: `togglePinTopic`, `toggleLockTopic`, `togglePinComment`, `toggleBestAnswer`, and `deleteComment`.
+* **Verification & Testing**:
+  - Verified 0 errors on `flutter analyze`.
+  - Verified 100% test pass on `flutter test`.
+
+---
+
 ## v1.8.3+25
 > **Profile Privacy Engine & About Tab Synchronisation** — Enhanced user profile privacy architecture and mobile compatibility with MYADS core v4.6.3. Integrated privacy-aware profile deserialization (`canViewAbout`, `aboutVisibility`), private state locked container for protected about sections, and added the inline `about_visibility` dropdown selector to Profile Settings.
 

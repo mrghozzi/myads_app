@@ -223,7 +223,7 @@ class _ForumTopicDetailScreenState extends ConsumerState<ForumTopicDetailScreen>
                   ),
                 ),
               ),
-              _buildReplyComposer(context, isDark, isLocked),
+              _buildReplyComposer(isDark, isLocked),
             ],
           );
         },
@@ -357,7 +357,7 @@ class _ForumTopicDetailScreenState extends ConsumerState<ForumTopicDetailScreen>
     );
   }
 
-  Widget _buildReplyComposer(BuildContext context, bool isDark, bool isLocked) {
+  Widget _buildReplyComposer(bool isDark, bool isLocked) {
     if (isLocked) {
       return Container(
         padding: const EdgeInsets.all(16),
@@ -468,23 +468,18 @@ class _ForumTopicDetailScreenState extends ConsumerState<ForumTopicDetailScreen>
                               content,
                               parentId: _replyingToParentId,
                             );
-                        if (mounted) {
-                          setState(() => _isPosting = false);
-                        }
+                        if (!mounted) return;
+                        setState(() => _isPosting = false);
 
                         if (success) {
                           _replyController.clear();
                           _cancelReply();
-                          if (mounted) {
-                            FocusScope.of(context).unfocus();
-                          }
+                          FocusScope.of(context).unfocus();
                           ref.invalidate(forumTopicDetailProvider(widget.topicId));
                         } else {
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Failed to post reply. Please try again.')),
-                            );
-                          }
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Failed to post reply. Please try again.')),
+                          );
                         }
                       },
               ),

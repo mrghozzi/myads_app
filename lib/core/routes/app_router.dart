@@ -66,7 +66,11 @@ final appRouter = GoRouter(
         ),
         GoRoute(
           path: '/clips',
-          builder: (context, state) => const ClipsScreen(),
+          builder: (context, state) {
+            final clipId = int.tryParse(state.uri.queryParameters['clip'] ?? state.uri.queryParameters['id'] ?? '');
+            final tab = state.uri.queryParameters['tab'];
+            return ClipsScreen(initialClipId: clipId, initialTab: tab);
+          },
         ),
         GoRoute(
           path: '/explore',
@@ -156,6 +160,15 @@ final appRouter = GoRouter(
         }
         final id = int.tryParse(state.uri.queryParameters['id'] ?? '') ?? 0;
         return PostDetailsScreen(statusId: id);
+      },
+    ),
+    GoRoute(
+      path: '/clips/:id',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final id = int.tryParse(state.pathParameters['id'] ?? '') ?? 0;
+        final tab = state.uri.queryParameters['tab'];
+        return ClipsScreen(initialClipId: id, initialTab: tab);
       },
     ),
     GoRoute(

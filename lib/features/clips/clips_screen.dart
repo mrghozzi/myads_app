@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:video_player/video_player.dart';
@@ -12,7 +13,14 @@ import 'providers/clips_provider.dart';
 import '../../../core/widgets/hexagon_avatar.dart';
 
 class ClipsScreen extends ConsumerStatefulWidget {
-  const ClipsScreen({super.key});
+  final int? initialClipId;
+  final String? initialTab;
+
+  const ClipsScreen({
+    super.key,
+    this.initialClipId,
+    this.initialTab,
+  });
 
   @override
   ConsumerState<ClipsScreen> createState() => _ClipsScreenState();
@@ -20,6 +28,70 @@ class ClipsScreen extends ConsumerStatefulWidget {
 
 class _ClipsScreenState extends ConsumerState<ClipsScreen> {
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.initialClipId != null && widget.initialClipId! > 0) {
+        ref.read(clipsProvider.notifier).setTargetedClip(widget.initialClipId!, tab: widget.initialTab);
+      } else if (widget.initialTab != null && widget.initialTab != 'latest') {
+        ref.read(clipsProvider.notifier).changeTab(widget.initialTab!);
+      }
+    });
+  }
+
+  Widget _buildTopTabs(BuildContext context, String currentTab) {
+    final tabs = [
+      {'id': 'latest', 'label': 'Latest'},
+      {'id': 'trending', 'label': 'Trending'},
+      {'id': 'following', 'label': 'Following'},
+    ];
+
+    return SafeArea(
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.45),
+              borderRadius: BorderRadius.circular(30),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: tabs.map((t) {
+                final isSelected = currentTab == t['id'];
+                return GestureDetector(
+                  onTap: () {
+                    ref.read(clipsProvider.notifier).changeTab(t['id']!);
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: isSelected ? Colors.white.withValues(alpha: 0.25) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      t['label']!,
+                      style: TextStyle(
+                        color: isSelected ? Colors.white : Colors.white70,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,30 +102,63 @@ class _ClipsScreenState extends ConsumerState<ClipsScreen> {
       body: clipsStateAsync.when(
         data: (state) {
           if (state.items.isEmpty) {
-            return const Center(child: Text('No clips found.', style: TextStyle(color: Colors.white)));
+            return Stack(
+              children: [
+                Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.movie_outlined, size: 64, color: Colors.white38),
+                      const SizedBox(height: 12),
+                      Text(
+                        state.currentTab == 'following'
+                            ? 'No clips from followed creators yet.'
+                            : 'No clips found.',
+                        style: const TextStyle(color: Colors.white70, fontSize: 16),
+                      ),
+                      const SizedBox(height: 16),
+                      if (state.currentTab != 'latest')
+                        ElevatedButton.icon(
+                          onPressed: () => ref.read(clipsProvider.notifier).changeTab('latest'),
+                          icon: const Icon(Icons.explore),
+                          label: const Text('Explore Latest'),
+                        ),
+                    ],
+                  ),
+                ),
+                _buildTopTabs(context, state.currentTab),
+              ],
+            );
           }
-          return RefreshIndicator(
-            onRefresh: () => ref.read(clipsProvider.notifier).refresh(),
-            child: PageView.builder(
-              scrollDirection: Axis.vertical,
-              itemCount: state.items.length + (state.hasMore ? 1 : 0),
-              onPageChanged: (index) {
-                setState(() => _currentIndex = index);
-                if (index == state.items.length - 1 && state.hasMore) {
-                  ref.read(clipsProvider.notifier).loadMore();
-                }
-              },
-              itemBuilder: (context, index) {
-                if (index == state.items.length) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final status = state.items[index];
-                return _ReelItem(
-                  status: status,
-                  isActive: index == _currentIndex,
-                );
-              },
-            ),
+
+          return Stack(
+            children: [
+              RefreshIndicator(
+                onRefresh: () => ref.read(clipsProvider.notifier).refresh(),
+                child: PageView.builder(
+                  scrollDirection: Axis.vertical,
+                  itemCount: state.items.length + (state.hasMore ? 1 : 0),
+                  onPageChanged: (index) {
+                    setState(() => _currentIndex = index);
+                    if (index == state.items.length - 1 && state.hasMore) {
+                      ref.read(clipsProvider.notifier).loadMore();
+                    }
+                  },
+                  itemBuilder: (context, index) {
+                    if (index == state.items.length) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    final status = state.items[index];
+                    return _ReelItem(
+                      key: ValueKey('reel_item_${status.id}'),
+                      status: status,
+                      isActive: index == _currentIndex,
+                    );
+                  },
+                ),
+              ),
+              _buildTopTabs(context, state.currentTab),
+            ],
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -62,6 +167,7 @@ class _ClipsScreenState extends ConsumerState<ClipsScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('Error: $err', style: const TextStyle(color: Colors.red)),
+              const SizedBox(height: 12),
               ElevatedButton(
                 onPressed: () => ref.read(clipsProvider.notifier).refresh(),
                 child: const Text('Retry'),
@@ -74,17 +180,17 @@ class _ClipsScreenState extends ConsumerState<ClipsScreen> {
   }
 }
 
-class _ReelItem extends StatefulWidget {
+class _ReelItem extends ConsumerStatefulWidget {
   final StatusModel status;
   final bool isActive;
 
-  const _ReelItem({required this.status, required this.isActive});
+  const _ReelItem({super.key, required this.status, required this.isActive});
 
   @override
-  State<_ReelItem> createState() => _ReelItemState();
+  ConsumerState<_ReelItem> createState() => _ReelItemState();
 }
 
-class _ReelItemState extends State<_ReelItem> {
+class _ReelItemState extends ConsumerState<_ReelItem> with SingleTickerProviderStateMixin {
   VideoPlayerController? _controller;
   bool _isInitialized = false;
 
@@ -92,9 +198,12 @@ class _ReelItemState extends State<_ReelItem> {
   late String? _reactionType;
   late int _likesCount;
   
-  // Assuming we don't have hasSaved in StatusModel yet, we track it locally (false by default)
   bool _hasSaved = false;
   int _savesCount = 0;
+
+  Timer? _viewTimer;
+  bool _viewRecorded = false;
+  bool _showHeartPop = false;
 
   @override
   void initState() {
@@ -102,7 +211,7 @@ class _ReelItemState extends State<_ReelItem> {
     _hasReacted = widget.status.hasLiked;
     _reactionType = widget.status.userReaction;
     _likesCount = widget.status.likesCount;
-    // If status model has saves, we'd initialize here. For now:
+    _hasSaved = widget.status.hasSaved;
     _initVideo();
   }
 
@@ -114,15 +223,48 @@ class _ReelItemState extends State<_ReelItem> {
     try {
       await _controller!.initialize();
       _controller!.setLooping(true);
-      setState(() {
-        _isInitialized = true;
-      });
-      if (widget.isActive) {
-        _controller!.play();
+      if (mounted) {
+        setState(() {
+          _isInitialized = true;
+        });
+        if (widget.isActive) {
+          _controller!.play();
+          _startViewTimer();
+        }
       }
     } catch (e) {
       debugPrint("Video init error: $e");
     }
+  }
+
+  void _startViewTimer() {
+    _viewTimer?.cancel();
+    if (_viewRecorded) return;
+
+    _viewTimer = Timer(const Duration(milliseconds: 2500), () {
+      if (mounted && widget.isActive && _controller?.value.isPlaying == true) {
+        _viewRecorded = true;
+        ref.read(clipsProvider.notifier).recordView(widget.status.id);
+      }
+    });
+  }
+
+  void _handleDoubleTap() {
+    setState(() {
+      _showHeartPop = true;
+    });
+
+    if (!_hasReacted) {
+      _toggleReaction('like');
+    }
+
+    Future.delayed(const Duration(milliseconds: 800), () {
+      if (mounted) {
+        setState(() {
+          _showHeartPop = false;
+        });
+      }
+    });
   }
 
   Future<void> _toggleReaction(String newReaction) async {
@@ -149,7 +291,6 @@ class _ReelItemState extends State<_ReelItem> {
     final success = await ReactionService.toggleReaction(subjectId, type, newReaction);
 
     if (!success && mounted) {
-      // Revert state if network call fails
       setState(() {
         _hasReacted = oldHasReacted;
         _reactionType = oldReactionType;
@@ -222,16 +363,20 @@ class _ReelItemState extends State<_ReelItem> {
     try {
       if (_hasSaved) {
         await ApiClient.instance.delete('/clips/${widget.status.id}/save');
-        setState(() {
-          _hasSaved = false;
-          _savesCount = (_savesCount > 0) ? _savesCount - 1 : 0;
-        });
+        if (mounted) {
+          setState(() {
+            _hasSaved = false;
+            _savesCount = (_savesCount > 0) ? _savesCount - 1 : 0;
+          });
+        }
       } else {
         await ApiClient.instance.post('/clips/${widget.status.id}/save');
-        setState(() {
-          _hasSaved = true;
-          _savesCount++;
-        });
+        if (mounted) {
+          setState(() {
+            _hasSaved = true;
+            _savesCount++;
+          });
+        }
       }
     } catch (e) {
       debugPrint('Save toggle error: $e');
@@ -244,7 +389,9 @@ class _ReelItemState extends State<_ReelItem> {
     if (oldWidget.isActive != widget.isActive) {
       if (widget.isActive) {
         _controller?.play();
+        _startViewTimer();
       } else {
+        _viewTimer?.cancel();
         _controller?.pause();
         _controller?.seekTo(Duration.zero);
       }
@@ -253,6 +400,7 @@ class _ReelItemState extends State<_ReelItem> {
 
   @override
   void dispose() {
+    _viewTimer?.cancel();
     _controller?.dispose();
     super.dispose();
   }
@@ -261,9 +409,11 @@ class _ReelItemState extends State<_ReelItem> {
     if (_controller == null || !_isInitialized) return;
     setState(() {
       if (_controller!.value.isPlaying) {
+        _viewTimer?.cancel();
         _controller!.pause();
       } else {
         _controller!.play();
+        _startViewTimer();
       }
     });
   }
@@ -271,16 +421,19 @@ class _ReelItemState extends State<_ReelItem> {
   @override
   Widget build(BuildContext context) {
     final displayContent = widget.status.displayContent ?? widget.status.text;
+    final viewsCount = widget.status.viewsCount;
 
     return VisibilityDetector(
       key: Key('reel_${widget.status.id}'),
       onVisibilityChanged: (info) {
         if (info.visibleFraction == 0 && _controller?.value.isPlaying == true) {
+          _viewTimer?.cancel();
           _controller?.pause();
         }
       },
       child: GestureDetector(
         onTap: _togglePlayPause,
+        onDoubleTap: _handleDoubleTap,
         child: Stack(
           children: [
             // Video Background
@@ -303,6 +456,29 @@ class _ReelItemState extends State<_ReelItem> {
                 ),
               ),
 
+            // Animated Heart Pop on Double-tap
+            if (_showHeartPop)
+              Center(
+                child: TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0.3, end: 1.3),
+                  duration: const Duration(milliseconds: 600),
+                  curve: Curves.elasticOut,
+                  builder: (context, scale, child) {
+                    return Transform.scale(
+                      scale: scale,
+                      child: const Icon(
+                        Icons.favorite,
+                        size: 110,
+                        color: Color(0xFFFF3366),
+                        shadows: [
+                          Shadow(color: Color(0x99FF3366), blurRadius: 20),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+
             // Play Icon overlay (if paused)
             if (_isInitialized && _controller != null && !_controller!.value.isPlaying)
               const Center(
@@ -316,6 +492,15 @@ class _ReelItemState extends State<_ReelItem> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // Views counter badge
+                  _buildActionButton(
+                    icon: Icons.visibility_outlined,
+                    label: viewsCount > 0 ? '$viewsCount' : '',
+                    onTap: () {},
+                  ),
+                  const SizedBox(height: 18),
+
+                  // Like button
                   GestureDetector(
                     onLongPressStart: (details) {
                       _showReactionsMenu(context, details.globalPosition);
@@ -327,7 +512,9 @@ class _ReelItemState extends State<_ReelItem> {
                       onTap: () => _toggleReaction('like'),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 18),
+
+                  // Comment button
                   _buildActionButton(
                     icon: Icons.comment_outlined,
                     label: '${widget.status.commentsCount}',
@@ -335,20 +522,24 @@ class _ReelItemState extends State<_ReelItem> {
                       context.push('/post', extra: widget.status);
                     },
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 18),
+
+                  // Save button
                   _buildActionButton(
                     icon: _hasSaved ? Icons.bookmark : Icons.bookmark_border,
                     color: _hasSaved ? Colors.cyan : Colors.white,
                     label: '$_savesCount',
                     onTap: _toggleSave,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 18),
+
+                  // Share button (Direct Clip deep-link)
                   _buildActionButton(
                     icon: Icons.share_outlined,
                     label: 'Share',
                     onTap: () {
-                      final url = 'https://adstn.ovh/post/${widget.status.id}';
-                      SharePlus.instance.share(ShareParams(text: 'Check out this reel: $url'));
+                      final url = 'https://adstn.ovh/clips/${widget.status.id}';
+                      SharePlus.instance.share(ShareParams(text: 'Check out this clip: $url'));
                     },
                   ),
                 ],
@@ -424,10 +615,10 @@ class _ReelItemState extends State<_ReelItem> {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.1),
+              color: Colors.white.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: color, size: 28),
+            child: Icon(icon, color: color, size: 26),
           ),
           if (label.isNotEmpty && label != '0') ...[
             const SizedBox(height: 4),
@@ -438,4 +629,3 @@ class _ReelItemState extends State<_ReelItem> {
     );
   }
 }
-

@@ -86,6 +86,7 @@ class StatusModel {
   final String? displayImage;
   final String? videoTitle;
   final String? videoThumbnail;
+  final int viewsCount;
   final bool hasSaved;
   final bool isFollowing;
   final MediaInfo? media;
@@ -123,6 +124,7 @@ class StatusModel {
     this.displayImage,
     this.videoTitle,
     this.videoThumbnail,
+    this.viewsCount = 0,
     this.hasSaved = false,
     this.isFollowing = false,
     this.media,
@@ -215,6 +217,7 @@ class StatusModel {
       displayImage: json['display_image'] != null ? UrlHelper.normalizeUrl(json['display_image'].toString()) : null,
       videoTitle: json['video_title']?.toString() ?? json['display_title']?.toString(),
       videoThumbnail: json['video_thumbnail'] != null ? UrlHelper.normalizeUrl(json['video_thumbnail'].toString()) : null,
+      viewsCount: json['views_count'] is int ? json['views_count'] : int.tryParse(json['views_count']?.toString() ?? json['views']?.toString() ?? '0') ?? 0,
       hasSaved: json['has_saved'] == true || json['is_saved'] == true,
       isFollowing: json['is_following'] == true,
       media: mediaInfo,

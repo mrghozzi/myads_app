@@ -457,7 +457,7 @@ class _VideoHubScreenState extends ConsumerState<VideoHubScreen> {
   Widget _buildSpotlightBanner(BuildContext context, StatusModel status) {
     final thumbUrl = status.videoThumbnail ?? status.displayImage;
     final title = status.videoTitle ?? status.text;
-    final views = status.commentsCount + status.likesCount * 3; // Approx view indicator
+    final views = status.viewsCount > 0 ? status.viewsCount : (status.commentsCount + status.likesCount * 3);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
@@ -631,7 +631,7 @@ class _VideoHubScreenState extends ConsumerState<VideoHubScreen> {
               final thumb = clip.videoThumbnail ?? clip.displayImage;
 
               return GestureDetector(
-                onTap: () => context.push('/video/watch/${clip.id}', extra: clip),
+                onTap: () => context.push('/clips/${clip.id}'),
                 child: Container(
                   width: 125,
                   decoration: BoxDecoration(

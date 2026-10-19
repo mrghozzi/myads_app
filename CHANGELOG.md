@@ -1,5 +1,32 @@
 # MYADS Mobile App — Changelog
 
+## v1.8.6+28
+> **Clips 2.0 Discovery Engine & Enhanced Short-Form Video Experience** — Synchronized `myads_app` with the MyAds core Clips 2.0 release. Introduced multi-tab discovery streams (Following, Trending, Latest), direct clip routing and deep-linking (`/clips/:id` and `/clips?clip=:id&tab=:tab`), automated 2.5-second continuous-playback view registration with client-side deduplication, double-tap heart pop micro-animation, and dynamic views count metric displays across clips and video hub shelves.
+
+### Clips 2.0 Discovery & Playback Experience
+* **Multi-Tab Clips Discovery (`clips_screen.dart`, `clips_provider.dart`)**:
+  - Implemented sleek glassmorphic top navigation bar with 3 discovery tabs: **Following**, **Trending**, and **Latest**.
+  - Added smooth animated sliding pill indicator reflecting active tab state.
+  - Seamless tab switching via `changeTab(String tab)` with lazy feed loading and preserved position.
+* **Automated View Tracking & Metrics (`clips_screen.dart`, `clips_provider.dart`, `status_model.dart`)**:
+  - Added 2.5-second continuous-playback view tracking timer via `recordView(int clipId)`.
+  - Added client-side view deduplication (`_recordedViewClipIds`) to prevent redundant API view requests during looping or rapid re-swipes.
+  - Extended `StatusModel` to parse and expose `viewsCount` from API payloads (`views_count` and `views`).
+  - Added real-time view counter pill badge to the action sidebar alongside likes, comments, and shares.
+* **Deep Linking & Direct Navigation (`app_router.dart`, `clips_screen.dart`, `video_hub_screen.dart`)**:
+  - Added dedicated GoRoute for direct clip URLs: `/clips/:id` supporting ID-based targeting and instant navigation.
+  - Added query parameter support for `/clips` with `clip` and `tab` keys.
+  - Added `setTargetedClip(int clipId)` in `ClipsNotifier` to automatically load and scroll directly to targeted clips.
+  - Updated Video Hub's Shorts shelf items to navigate directly via `/clips/${clip.id}`.
+  - Updated Clip share action to copy canonical direct URLs (`/clips/${status.id}`).
+* **Micro-Interactions & UX Polish (`clips_screen.dart`)**:
+  - Added Instagram/TikTok-style double-tap animated heart pop with `Curves.elasticOut` spring dynamics.
+  - Added haptic/visual feedback on like, save, and share interactions.
+* **Verification & Testing**:
+  - Verified 0 errors and 0 warnings on `flutter analyze`.
+
+---
+
 ## v1.8.5+27
 > **Video Hub & Cinema Watch Page Parity Release** — Synchronized `myads_app` with the reconstructed Video Hub and standalone Cinema Watch pages. Added dynamic category choice pills, multi-criteria sorting menu (Latest, Most Viewed, Most Reacted, Oldest), shorts filter alias support, dedicated `/video/watch/:id` and `/video/:id` routes, and resilient video post loading by ID.
 

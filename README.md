@@ -132,7 +132,7 @@ lib/
 ### Prerequisites
 - Flutter SDK 3.27+
 - Android SDK (API 21+)
-- A running MYADS backend instance (v4.6.3+) with the API enabled
+- A running MYADS backend instance (v4.6.4+) with the API enabled
 
 ### Configuration
 1. Copy `.env.example` to `.env`:
@@ -201,7 +201,7 @@ flutter build apk --release
 
 ## API Requirements
 
-The app requires the MYADS backend API (v4.6.3+) with the following:
+The app requires the MYADS backend API (v4.6.4+) with the following:
 - Laravel Sanctum enabled
 - Admin-generated API key configured in `.env` (sent via the `X-API-KEY` header only)
 - API rate limiting enabled: `/api/login` (5/min), `/api/register` (3/min)
@@ -219,5 +219,5 @@ See `Documents/API_DOCS.md` in the main project for full endpoint documentation.
 
 ## License
 
-MIT — Part of the MYADS v4.6.3 project by mrghozzi.
+MIT — Part of the MYADS v4.6.4 project by mrghozzi.
 

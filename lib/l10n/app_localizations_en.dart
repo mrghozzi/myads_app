@@ -179,4 +179,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get noSavedPostsDesc =>
       'Posts you bookmark will appear here for easy access anytime.';
+
+  @override
+  String get helpCenter => 'Help Center';
+
+  @override
+  String get supportForum => 'Support Forum';
+
+  @override
+  String get supportTickets => 'Support Tickets';
+
+  @override
+  String get helpAndSupport => 'Help & Support';
 }

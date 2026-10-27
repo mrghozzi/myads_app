@@ -1,5 +1,27 @@
 # MYADS Mobile App — Changelog
 
+## v1.8.7+29
+> **Help Center, Support Forum & Technical Tickets Parity Release** — Full synchronization with MYADS core v4.6.4 support ecosystem. Integrated in-app access to the Help & Documentation Center (`/help`), dedicated Support Forum (`/support`), and Technical Support Tickets (`/tickets`) via `SupportWebviewScreen` with external browser launcher fallback. Streamlined Settings Hub navigation, eliminating duplicate billing tiles and introducing a dedicated "Help & Support" group with bilingual Arabic/English parity. Added Discover cards in Explore screen and verified backend route compatibility.
+
+### Help Center, Support Forum & Tickets Integration
+* **Dedicated Support Webview Engine (`support_webview_screen.dart`, `app_router.dart`)**:
+  - Implemented `SupportWebviewScreen` providing unified, authenticated in-app browsing for Help Center (`/help`), Support Forum (`/support`), and Support Tickets (`/tickets`).
+  - Added token header injection (`Authorization: Bearer <token>`, `X-Mobile-App: true`), page reload button, and 1-click external browser launch fallback (`SafeUrlLauncher`).
+  - Added direct GoRoute declarations for `/help`, `/support`, and `/tickets`.
+* **Settings Hub & Explore Screen Polish (`settings_hub_screen.dart`, `explore_screen.dart`)**:
+  - Added dedicated **"Help & Support" ("الدعم والمساعدة")** group in `SettingsHubScreen` linking directly to Help Center, Support Forum, and Tickets.
+  - Eliminated duplicate "Billing & Subscriptions" entry from General group.
+  - Added 2 new Discover action cards in `ExploreScreen` (Help Center & Support) forming a balanced 2x4 grid.
+* **Full Bilingual Localization (`app_en.arb`, `app_ar.arb`, `app_localizations.dart`)**:
+  - Added 100% Arabic and English translation keys for `helpCenter`, `supportForum`, `supportTickets`, and `helpAndSupport`.
+* **Backend Route Compatibility (`routes/web.php`)**:
+  - Added `/billing` route alias in core backend ensuring backward-compatible zero-404 navigation for in-app billing.
+* **Verification & Testing**:
+  - 100% test pass on `flutter test` (11 tests passed).
+  - Clean `flutter analyze` with 0 issues, 0 warnings.
+
+---
+
 ## v1.8.6+28
 > **Clips 2.0 Discovery Engine & Enhanced Short-Form Video Experience** — Synchronized `myads_app` with the MyAds core Clips 2.0 release. Introduced multi-tab discovery streams (Following, Trending, Latest), direct clip routing and deep-linking (`/clips/:id` and `/clips?clip=:id&tab=:tab`), automated 2.5-second continuous-playback view registration with client-side deduplication, double-tap heart pop micro-animation, and dynamic views count metric displays across clips and video hub shelves.
 

@@ -439,6 +439,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Posts you bookmark will appear here for easy access anytime.'**
   String get noSavedPostsDesc;
+
+  /// No description provided for @helpCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Help Center'**
+  String get helpCenter;
+
+  /// No description provided for @supportForum.
+  ///
+  /// In en, this message translates to:
+  /// **'Support Forum'**
+  String get supportForum;
+
+  /// No description provided for @supportTickets.
+  ///
+  /// In en, this message translates to:
+  /// **'Support Tickets'**
+  String get supportTickets;
+
+  /// No description provided for @helpAndSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get helpAndSupport;
 }
 
 class _AppLocalizationsDelegate

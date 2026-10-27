@@ -1,6 +1,6 @@
 # MYADS Mobile App
 
-> **Version:** 1.8.3+25 | **Platform:** Android | **Framework:** Flutter 3.27+ / Dart 3.10+
+> **Version:** 1.8.7+29 | **Platform:** Android | **Framework:** Flutter 3.27+ / Dart 3.10+
 
 The official first-party mobile client for the [MYADS](https://github.com/mrghozzi/myads) social network, marketplace, and ad exchange platform. Built with Flutter and powered by the MYADS Laravel REST API (Sanctum).
 
@@ -75,6 +75,7 @@ The official first-party mobile client for the [MYADS](https://github.com/mrghoz
 ### Personalization & Communication
 - **Settings Hub:** Dedicated settings screen mirroring the web dashboard with nested panels for Profile, Privacy, Social, Mail Notifications, Active Sessions, Apps, Badges, History, and Ads Analytics.
 - **Billing Security:** In-app secure billing and subscription handling (`BillingScreen`).
+- **Help Center & Technical Support (v1.8.6):** Direct in-app access to Help & Knowledge Base (`/help`), dedicated Support Forum (`/support`), and Technical Support Tickets (`/tickets`) via `SupportWebviewScreen` with external browser launcher fallback.
 - **Private Messages:** Full chat interface for 1-on-1 private messaging with unread count badges, encrypted `route_key` conversation navigation, username fallback resolution, and real-time polling via `/api/messages/updates`.
 - **Notifications:** Integrated in-app notifications center with dynamic unread indicators and mark-all-read support.
 
@@ -110,6 +111,7 @@ lib/
 │   ├── shell/               # Bottom navigation bar & scaffold shell
 │   ├── splash/              # Token verification & startup routing
 │   ├── store/               # Digital products store, customer reviews, screenshot viewer
+│   ├── support/             # Help Center, Support Forum & Tickets in-app browser
 │   └── video/               # Dedicated Video Hub, YouTube Shorts shelf, video grid
 └── main.dart                # App entry point & dependency injection
 ```

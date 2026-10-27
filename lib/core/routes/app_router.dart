@@ -33,6 +33,7 @@ import '../../features/orders/orders_list_screen.dart';
 import '../../features/orders/order_detail_screen.dart';
 import '../../features/gamification/gamification_screen.dart';
 import '../../features/billing/billing_screen.dart';
+import '../../features/support/support_webview_screen.dart';
 import '../models/status_model.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -308,6 +309,30 @@ final appRouter = GoRouter(
       path: '/saved-posts',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const SavedPostsScreen(),
+    ),
+    GoRoute(
+      path: '/help',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final title = state.uri.queryParameters['title'] ?? 'Help Center';
+        return SupportWebviewScreen(title: title, path: '/help');
+      },
+    ),
+    GoRoute(
+      path: '/support',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final title = state.uri.queryParameters['title'] ?? 'Support Forum';
+        return SupportWebviewScreen(title: title, path: '/support');
+      },
+    ),
+    GoRoute(
+      path: '/tickets',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final title = state.uri.queryParameters['title'] ?? 'Support Tickets';
+        return SupportWebviewScreen(title: title, path: '/tickets');
+      },
     ),
   ],
 );

@@ -179,4 +179,16 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get noSavedPostsDesc =>
       'المنشورات التي تقوم بحفظها ستظهر هنا لتسهيل الوصول إليها في أي وقت.';
+
+  @override
+  String get helpCenter => 'مركز المساعدة';
+
+  @override
+  String get supportForum => 'منتدى الدعم الفني';
+
+  @override
+  String get supportTickets => 'تذاكر الدعم الفني';
+
+  @override
+  String get helpAndSupport => 'الدعم والمساعدة';
 }

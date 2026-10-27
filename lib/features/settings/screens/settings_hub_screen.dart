@@ -77,7 +77,6 @@ class SettingsHubScreen extends ConsumerWidget {
             // General Group
             _buildSectionTitle('General', isDark),
             _buildListTile(context, Icons.person_outline, l10n.editProfile, '/settings/profile', isDark),
-            _buildListTile(context, Icons.credit_card, 'Billing & Subscriptions', '/billing', isDark),
             _buildListTile(context, Icons.lock_outline, l10n.privacySettings, '/settings/privacy', isDark),
             _buildListTile(context, Icons.share, l10n.socialLinks, '/settings/social', isDark),
             _buildListTile(context, Icons.desktop_windows, l10n.sessions, '/settings/sessions', isDark),
@@ -135,6 +134,14 @@ class SettingsHubScreen extends ConsumerWidget {
                 context.push('/settings/ads-analytics');
               },
             ),
+
+            const SizedBox(height: 24),
+
+            // Support & Help Group
+            _buildSectionTitle(l10n.helpAndSupport, isDark),
+            _buildListTile(context, Icons.help_outline_rounded, l10n.helpCenter, '/help', isDark),
+            _buildListTile(context, Icons.forum_outlined, l10n.supportForum, '/support', isDark),
+            _buildListTile(context, Icons.confirmation_number_outlined, l10n.supportTickets, '/tickets', isDark),
           ],
         ),
       ),

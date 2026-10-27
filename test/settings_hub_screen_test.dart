@@ -59,5 +59,13 @@ void main() {
     expect(find.text('@testuser'), findsOneWidget);
     expect(find.text('Edit Profile'), findsNWidgets(2)); // One in header, one in list
     expect(find.text('Privacy Settings'), findsOneWidget);
+
+    // Scroll down to reveal Support & Help items
+    await tester.scrollUntilVisible(find.text('Help Center'), 200);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Help Center'), findsOneWidget);
+    expect(find.text('Support Forum'), findsOneWidget);
+    expect(find.text('Support Tickets'), findsOneWidget);
   });
 }

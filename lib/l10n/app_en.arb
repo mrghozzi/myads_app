@@ -56,5 +56,9 @@
   "saved": "Saved",
   "bookmark": "Bookmark",
   "noSavedPosts": "No saved posts yet",
-  "noSavedPostsDesc": "Posts you bookmark will appear here for easy access anytime."
+  "noSavedPostsDesc": "Posts you bookmark will appear here for easy access anytime.",
+  "helpCenter": "Help Center",
+  "supportForum": "Support Forum",
+  "supportTickets": "Support Tickets",
+  "helpAndSupport": "Help & Support"
 }

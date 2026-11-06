@@ -1,5 +1,22 @@
 # MYADS Mobile App — Changelog
 
+## v1.8.8+30
+> **MYADS Core v4.7.0 Synchronization & Compatibility Release** — Full synchronization and verified compatibility with MYADS core v4.7.0. Verified mobile authentication and Sanctum session continuity under v4.7.0 zero-trust security and dual DocumentRoot architecture. Validated `SupportWebviewScreen` with AI Support Deflection engine and Cloudflare Turnstile human verification. Verified clean `flutter analyze` (0 issues) and 100% test pass on `flutter test`.
+
+### Core Compatibility & Security Synchronization
+* **MYADS Core v4.7.0 Backend Alignment**:
+  - Verified REST API endpoint compatibility across authentication (`/api/login`, `/api/register`), video feeds (`/api/video/feed`), orders (`/api/orders`), and notifications.
+  - Confirmed Sanctum Bearer token persistence and request header interoperability (`X-Mobile-App: true`, `X-API-KEY`).
+  - Verified `SupportWebviewScreen` compatibility with backend v4.7.0 strict CSP nonces, Turnstile bot challenges, and AI Support Deflection cards.
+* **Documentation & Versioning**:
+  - Bumped mobile app version to `1.8.8+30`.
+  - Updated minimum backend API requirement to `v4.7.0+` in `README.md`.
+* **Verification & Testing**:
+  - 100% test pass on `flutter test` (11 tests passed).
+  - Clean `flutter analyze` with 0 issues, 0 warnings.
+
+---
+
 ## v1.8.7+29
 > **Help Center, Support Forum & Technical Tickets Parity Release** — Full synchronization with MYADS core v4.6.4 support ecosystem. Integrated in-app access to the Help & Documentation Center (`/help`), dedicated Support Forum (`/support`), and Technical Support Tickets (`/tickets`) via `SupportWebviewScreen` with external browser launcher fallback. Streamlined Settings Hub navigation, eliminating duplicate billing tiles and introducing a dedicated "Help & Support" group with bilingual Arabic/English parity. Added Discover cards in Explore screen and verified backend route compatibility.
 

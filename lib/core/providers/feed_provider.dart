@@ -10,6 +10,7 @@ class FeedState {
   final bool isLoading;
   final bool isLoadingMore;
   final String? error;
+  final String currentFilter;
 
   FeedState({
     required this.statuses,
@@ -18,9 +19,10 @@ class FeedState {
     required this.isLoading,
     required this.isLoadingMore,
     this.error,
+    this.currentFilter = 'all',
   });
 
-  factory FeedState.initial() {
+  factory FeedState.initial({String filter = 'all'}) {
     return FeedState(
       statuses: [],
       currentPage: 1,
@@ -28,6 +30,7 @@ class FeedState {
       isLoading: true,
       isLoadingMore: false,
       error: null,
+      currentFilter: filter,
     );
   }
 
@@ -38,6 +41,7 @@ class FeedState {
     bool? isLoading,
     bool? isLoadingMore,
     String? error,
+    String? currentFilter,
   }) {
     return FeedState(
       statuses: statuses ?? this.statuses,
@@ -46,6 +50,7 @@ class FeedState {
       isLoading: isLoading ?? this.isLoading,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       error: error ?? this.error,
+      currentFilter: currentFilter ?? this.currentFilter,
     );
   }
 }
@@ -58,10 +63,14 @@ class FeedNotifier extends Notifier<FeedState> {
     return FeedState.initial();
   }
 
-  Future<void> loadInitial() async {
-    state = FeedState.initial();
+  Future<void> loadInitial([String? filter]) async {
+    final activeFilter = filter ?? state.currentFilter;
+    state = FeedState.initial(filter: activeFilter);
     try {
-      final response = await ApiClient.instance.get('/portal/feed', queryParameters: {'page': 1});
+      final response = await ApiClient.instance.get('/portal/feed', queryParameters: {
+        'page': 1,
+        'filter': activeFilter,
+      });
       final data = response.data;
       if (data is! Map) {
         throw Exception('خطأ: السيرفر لم يرجع بيانات JSON (ربما لم تقم برفع ملفات الـ API الجديدة إلى استضافتك adstn.ovh)');
@@ -90,6 +99,7 @@ class FeedNotifier extends Notifier<FeedState> {
           isLoading: false,
           isLoadingMore: false,
           error: null,
+          currentFilter: activeFilter,
         );
       } else {
         throw Exception(data['message'] ?? 'Failed to load feed');
@@ -122,7 +132,10 @@ class FeedNotifier extends Notifier<FeedState> {
     final nextPage = state.currentPage + 1;
 
     try {
-      final response = await ApiClient.instance.get('/portal/feed', queryParameters: {'page': nextPage});
+      final response = await ApiClient.instance.get('/portal/feed', queryParameters: {
+        'page': nextPage,
+        'filter': state.currentFilter,
+      });
       final data = response.data;
       if (data is! Map) {
         throw Exception('Server returned invalid format');
@@ -160,7 +173,12 @@ class FeedNotifier extends Notifier<FeedState> {
   }
 
   Future<void> refreshFeed() async {
-    await loadInitial();
+    await loadInitial(state.currentFilter);
+  }
+
+  Future<void> setFilter(String filter) async {
+    if (state.currentFilter == filter && !state.isLoading) return;
+    await loadInitial(filter);
   }
 
   void removeStatus(int statusId) {
@@ -174,6 +192,17 @@ class FeedNotifier extends Notifier<FeedState> {
     if (index != -1) {
       final newStatuses = List<StatusModel>.from(state.statuses);
       newStatuses[index] = updatedStatus;
+      state = state.copyWith(statuses: newStatuses);
+    }
+  }
+
+  void updatePoll(int statusId, PollModel updatedPoll) {
+    final index = state.statuses.indexWhere((s) => s.id == statusId);
+    if (index != -1) {
+      final status = state.statuses[index];
+      final updated = status.copyWith(poll: updatedPoll);
+      final newStatuses = List<StatusModel>.from(state.statuses);
+      newStatuses[index] = updated;
       state = state.copyWith(statuses: newStatuses);
     }
   }

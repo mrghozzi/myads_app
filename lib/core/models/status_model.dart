@@ -62,6 +62,109 @@ class MediaInfo {
   bool get isMusic => type == 'music';
 }
 
+class PollOptionModel {
+  final int id;
+  final String optionText;
+  final int votesCount;
+  final double percentage;
+
+  PollOptionModel({
+    required this.id,
+    required this.optionText,
+    required this.votesCount,
+    required this.percentage,
+  });
+
+  factory PollOptionModel.fromJson(Map<String, dynamic> json) {
+    return PollOptionModel(
+      id: json['id'] is int ? json['id'] : int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+      optionText: json['option_text']?.toString() ?? '',
+      votesCount: json['votes_count'] is int ? json['votes_count'] : int.tryParse(json['votes_count']?.toString() ?? '0') ?? 0,
+      percentage: json['percentage'] is num ? (json['percentage'] as num).toDouble() : double.tryParse(json['percentage']?.toString() ?? '0.0') ?? 0.0,
+    );
+  }
+
+  PollOptionModel copyWith({
+    int? id,
+    String? optionText,
+    int? votesCount,
+    double? percentage,
+  }) {
+    return PollOptionModel(
+      id: id ?? this.id,
+      optionText: optionText ?? this.optionText,
+      votesCount: votesCount ?? this.votesCount,
+      percentage: percentage ?? this.percentage,
+    );
+  }
+}
+
+class PollModel {
+  final int id;
+  final String question;
+  final int totalVotes;
+  final bool isExpired;
+  final String? expiresAt;
+  final bool hasVoted;
+  final int? userVotedOptionId;
+  final List<PollOptionModel> options;
+
+  PollModel({
+    required this.id,
+    required this.question,
+    required this.totalVotes,
+    required this.isExpired,
+    this.expiresAt,
+    required this.hasVoted,
+    this.userVotedOptionId,
+    required this.options,
+  });
+
+  factory PollModel.fromJson(Map<String, dynamic> json) {
+    List<PollOptionModel> parsedOptions = [];
+    if (json['options'] != null && json['options'] is List) {
+      parsedOptions = (json['options'] as List)
+          .map((e) => PollOptionModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    }
+
+    return PollModel(
+      id: json['id'] is int ? json['id'] : int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+      question: json['question']?.toString() ?? '',
+      totalVotes: json['total_votes'] is int ? json['total_votes'] : int.tryParse(json['total_votes']?.toString() ?? '0') ?? 0,
+      isExpired: json['is_expired'] == true,
+      expiresAt: json['expires_at']?.toString(),
+      hasVoted: json['has_voted'] == true,
+      userVotedOptionId: json['user_voted_option_id'] is int
+          ? json['user_voted_option_id']
+          : int.tryParse(json['user_voted_option_id']?.toString() ?? ''),
+      options: parsedOptions,
+    );
+  }
+
+  PollModel copyWith({
+    int? id,
+    String? question,
+    int? totalVotes,
+    bool? isExpired,
+    String? expiresAt,
+    bool? hasVoted,
+    int? userVotedOptionId,
+    List<PollOptionModel>? options,
+  }) {
+    return PollModel(
+      id: id ?? this.id,
+      question: question ?? this.question,
+      totalVotes: totalVotes ?? this.totalVotes,
+      isExpired: isExpired ?? this.isExpired,
+      expiresAt: expiresAt ?? this.expiresAt,
+      hasVoted: hasVoted ?? this.hasVoted,
+      userVotedOptionId: userVotedOptionId ?? this.userVotedOptionId,
+      options: options ?? this.options,
+    );
+  }
+}
+
 class StatusModel {
   final int id;
   final String text;
@@ -99,6 +202,7 @@ class StatusModel {
   final RepostRecordModel? repostRecord;
   final bool isPromotedAd;
   final List<StatusModel>? suggestedVideos;
+  final PollModel? poll;
 
   StatusModel({
     required this.id,
@@ -137,6 +241,7 @@ class StatusModel {
     this.repostRecord,
     this.isPromotedAd = false,
     this.suggestedVideos,
+    this.poll,
   });
 
   factory StatusModel.fromJson(Map<String, dynamic> json) {
@@ -193,6 +298,12 @@ class StatusModel {
           .toList();
     }
 
+    // Parse poll
+    PollModel? poll;
+    if (json['poll'] != null && json['poll'] is Map) {
+      poll = PollModel.fromJson(json['poll'] as Map<String, dynamic>);
+    }
+
     return StatusModel(
       id: json['id'] is int ? json['id'] : int.tryParse(json['id']?.toString() ?? '0') ?? 0,
       text: json['text']?.toString() ?? '',
@@ -230,6 +341,7 @@ class StatusModel {
       repostRecord: repostRecord,
       isPromotedAd: json['is_promoted_ad'] == true,
       suggestedVideos: suggestedVideos,
+      poll: poll,
     );
   }
 
@@ -244,6 +356,9 @@ class StatusModel {
 
   /// Whether this post has a rich activity card (Store, Directory, KB, Order)
   bool get hasActivityCard => activityCard != null;
+
+  /// Whether this post has an interactive poll
+  bool get hasPoll => poll != null;
 
   /// Helper getter for repost status ID
   int? get repostStatusId => repostRecord?.originalStatusId;
@@ -284,6 +399,7 @@ class StatusModel {
     RepostRecordModel? repostRecord,
     bool? isPromotedAd,
     List<StatusModel>? suggestedVideos,
+    PollModel? poll,
   }) {
     return StatusModel(
       id: id ?? this.id,
@@ -321,6 +437,7 @@ class StatusModel {
       repostRecord: repostRecord ?? this.repostRecord,
       isPromotedAd: isPromotedAd ?? this.isPromotedAd,
       suggestedVideos: suggestedVideos ?? this.suggestedVideos,
+      poll: poll ?? this.poll,
     );
   }
 }

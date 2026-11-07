@@ -45,6 +45,12 @@ class _ComposerScreenState extends ConsumerState<ComposerScreen> {
   final TextEditingController _directoryNameController = TextEditingController();
   final TextEditingController _directoryTagsController = TextEditingController();
   final TextEditingController _videoTitleController = TextEditingController();
+  final TextEditingController _pollQuestionController = TextEditingController();
+  final List<TextEditingController> _pollOptionsControllers = [
+    TextEditingController(),
+    TextEditingController(),
+  ];
+  int _pollDurationDays = 7;
 
   List<File> _selectedFiles = [];
   File? _videoThumbnailFile;
@@ -117,7 +123,28 @@ class _ComposerScreenState extends ConsumerState<ComposerScreen> {
     _directoryNameController.dispose();
     _directoryTagsController.dispose();
     _videoTitleController.dispose();
+    _pollQuestionController.dispose();
+    for (var c in _pollOptionsControllers) {
+      c.dispose();
+    }
     super.dispose();
+  }
+
+  void _addPollOption() {
+    if (_pollOptionsControllers.length < 6) {
+      setState(() {
+        _pollOptionsControllers.add(TextEditingController());
+      });
+    }
+  }
+
+  void _removePollOption(int index) {
+    if (_pollOptionsControllers.length > 2) {
+      setState(() {
+        _pollOptionsControllers[index].dispose();
+        _pollOptionsControllers.removeAt(index);
+      });
+    }
   }
 
   Future<void> _loadComposerOptions() async {
@@ -260,6 +287,34 @@ class _ComposerScreenState extends ConsumerState<ComposerScreen> {
 
       if (_postKind == 'video' && _videoTitleController.text.trim().isNotEmpty) {
         map['video_title'] = _videoTitleController.text.trim();
+      }
+
+      if (_postKind == 'poll') {
+        map['post_kind'] = 'poll';
+        final question = _pollQuestionController.text.trim();
+        if (question.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please enter a poll question.')),
+          );
+          return;
+        }
+        map['poll_question'] = question;
+
+        final options = _pollOptionsControllers
+            .map((c) => c.text.trim())
+            .where((t) => t.isNotEmpty)
+            .toList();
+        if (options.length < 2) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please provide at least 2 poll options.')),
+          );
+          return;
+        }
+
+        for (int i = 0; i < options.length; i++) {
+          map['poll_options[$i]'] = options[i];
+        }
+        map['poll_duration_days'] = _pollDurationDays;
       }
 
       final formData = FormData.fromMap(map);
@@ -776,6 +831,117 @@ class _ComposerScreenState extends ConsumerState<ComposerScreen> {
                       ),
                     ],
 
+                    // Poll Creation Block
+                    if (_postKind == 'poll') ...[
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: surfaceColor,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFF615DFA).withValues(alpha: 0.3)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(Icons.poll_rounded, color: Color(0xFF615DFA), size: 20),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      Localizations.localeOf(context).languageCode == 'ar' ? 'استطلاع رأي (Poll)' : 'Poll',
+                                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF615DFA)),
+                                    ),
+                                  ],
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.close, size: 18),
+                                  onPressed: () => setState(() => _postKind = 'text'),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            TextField(
+                              controller: _pollQuestionController,
+                              style: TextStyle(fontSize: 14, color: textColor),
+                              decoration: InputDecoration(
+                                labelText: Localizations.localeOf(context).languageCode == 'ar' ? 'سؤال الاستطلاع' : 'Poll Question',
+                                hintText: Localizations.localeOf(context).languageCode == 'ar' ? 'ما الذي تود طرحه للتصويت؟' : 'Ask a question...',
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                                isDense: true,
+                              ),
+                            ),
+                            const SizedBox(height: 14),
+                            Text(
+                              Localizations.localeOf(context).languageCode == 'ar' ? 'خيارات التصويت' : 'Poll Options',
+                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: mutedColor),
+                            ),
+                            const SizedBox(height: 8),
+                            ...List.generate(_pollOptionsControllers.length, (index) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextField(
+                                        controller: _pollOptionsControllers[index],
+                                        style: TextStyle(fontSize: 14, color: textColor),
+                                        decoration: InputDecoration(
+                                          prefixText: '${index + 1}. ',
+                                          hintText: '${Localizations.localeOf(context).languageCode == 'ar' ? "الخيار" : "Option"} ${index + 1}',
+                                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                                          isDense: true,
+                                        ),
+                                      ),
+                                    ),
+                                    if (_pollOptionsControllers.length > 2) ...[
+                                      const SizedBox(width: 6),
+                                      IconButton(
+                                        icon: const Icon(Icons.close, color: Colors.red, size: 20),
+                                        onPressed: () => _removePollOption(index),
+                                        padding: EdgeInsets.zero,
+                                        constraints: const BoxConstraints(),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              );
+                            }),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                if (_pollOptionsControllers.length < 6)
+                                  TextButton.icon(
+                                    onPressed: _addPollOption,
+                                    icon: const Icon(Icons.add, size: 16),
+                                    label: Text(Localizations.localeOf(context).languageCode == 'ar' ? 'إضافة خيار' : 'Add Option'),
+                                  )
+                                else
+                                  const SizedBox(),
+                                DropdownButton<int>(
+                                  value: _pollDurationDays,
+                                  underline: const SizedBox(),
+                                  items: [
+                                    DropdownMenuItem(value: 1, child: Text(Localizations.localeOf(context).languageCode == 'ar' ? 'يوم واحد' : '1 Day')),
+                                    DropdownMenuItem(value: 3, child: Text(Localizations.localeOf(context).languageCode == 'ar' ? '3 أيام' : '3 Days')),
+                                    DropdownMenuItem(value: 7, child: Text(Localizations.localeOf(context).languageCode == 'ar' ? '7 أيام' : '7 Days')),
+                                    DropdownMenuItem(value: 14, child: Text(Localizations.localeOf(context).languageCode == 'ar' ? '14 يوماً' : '14 Days')),
+                                    DropdownMenuItem(value: 30, child: Text(Localizations.localeOf(context).languageCode == 'ar' ? '30 يوماً' : '30 Days')),
+                                  ],
+                                  onChanged: (val) {
+                                    if (val != null) setState(() => _pollDurationDays = val);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+
                     // Media Files Preview
                     if (_selectedFiles.isNotEmpty) ...[
                       const SizedBox(height: 16),
@@ -839,6 +1005,18 @@ class _ComposerScreenState extends ConsumerState<ComposerScreen> {
                             label: l10n.uploadClips,
                             color: const Color(0xFFFFB100),
                             onTap: () => _pickFiles(FileType.video, 'clips'),
+                          ),
+                          _buildToolIconButton(
+                            icon: Icons.poll_outlined,
+                            label: Localizations.localeOf(context).languageCode == 'ar' ? 'استطلاع' : 'Poll',
+                            color: const Color(0xFF615DFA),
+                            isActive: _postKind == 'poll',
+                            onTap: () {
+                              setState(() {
+                                _selectedFiles.clear();
+                                _postKind = 'poll';
+                              });
+                            },
                           ),
                         ],
                       ),

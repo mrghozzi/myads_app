@@ -8,6 +8,7 @@ import 'video_player_widget.dart';
 import 'audio_player_widget.dart';
 import 'file_download_widget.dart';
 import 'activity_card_widget.dart';
+import 'poll_widget.dart';
 import '../../../core/widgets/hexagon_avatar.dart';
 import '../../../core/widgets/formatted_content_widget.dart';
 import '../../posts/posts_repository.dart';
@@ -363,8 +364,8 @@ class _PostCardState extends ConsumerState<PostCard> {
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                   child: _buildHeader(context),
                 ),
-                // Media type badge
-                if (widget.status.hasMedia) ...[
+                // Media or Poll type badge
+                if (widget.status.hasMedia || widget.status.hasPoll) ...[
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                     child: _buildMediaBadge(context, widget.status),
@@ -399,6 +400,9 @@ class _PostCardState extends ConsumerState<PostCard> {
                 // Activity card (Store, Directory, Knowledgebase, Order)
                 if (widget.status.hasActivityCard)
                   ActivityCardWidget(card: widget.status.activityCard!),
+                // Interactive poll card
+                if (widget.status.hasPoll)
+                  PollWidget(status: widget.status),
                 // Media content (video, audio, images, files)
                 _buildMediaContent(context, widget.status),
                 // Repost embed (if any)
@@ -423,8 +427,31 @@ class _PostCardState extends ConsumerState<PostCard> {
     );
   }
 
-  /// Build a badge indicating the media type (Video, Audio, Clips, Music, File)
+  /// Build a badge indicating the media or poll type
   Widget _buildMediaBadge(BuildContext context, StatusModel status) {
+    if (status.hasPoll) {
+      const color = Color(0xFF615DFA);
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.poll_rounded, size: 14, color: color),
+            SizedBox(width: 4),
+            Text(
+              'Poll',
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: color),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (!status.hasMedia) return const SizedBox.shrink();
     final media = status.media!;
     
     IconData icon;

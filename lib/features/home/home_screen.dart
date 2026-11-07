@@ -56,11 +56,107 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
         ),
-        child: RefreshIndicator(
-          color: Theme.of(context).colorScheme.primary,
-          onRefresh: () => ref.read(feedProvider.notifier).refreshFeed(),
-          child: _buildBody(context, feedState),
+        child: Column(
+          children: [
+            _buildFilterChips(context, feedState.currentFilter),
+            Expanded(
+              child: RefreshIndicator(
+                color: Theme.of(context).colorScheme.primary,
+                onRefresh: () => ref.read(feedProvider.notifier).refreshFeed(),
+                child: _buildBody(context, feedState),
+              ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildFilterChips(BuildContext context, String currentFilter) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = Theme.of(context).colorScheme.primary;
+
+    final filters = [
+      {'key': 'all', 'label': 'All', 'label_ar': 'الكل', 'icon': Icons.public_rounded},
+      {'key': 'trending', 'label': 'Trending', 'label_ar': 'الشائع', 'icon': Icons.local_fire_department_rounded, 'color': Colors.deepOrange},
+      {'key': 'me', 'label': 'Following', 'label_ar': 'المتابعون', 'icon': Icons.people_outline_rounded},
+      {'key': 'media', 'label': 'Media', 'label_ar': 'الوسائط', 'icon': Icons.play_circle_outline_rounded, 'color': Colors.blue},
+      {'key': 'saved', 'label': 'Saved', 'label_ar': 'المحفوظات', 'icon': Icons.bookmark_outline_rounded},
+      {'key': 'my_posts', 'label': 'My Posts', 'label_ar': 'منشوراتي', 'icon': Icons.person_outline_rounded},
+    ];
+
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+
+    return Container(
+      height: 48,
+      margin: const EdgeInsets.only(top: 8, bottom: 4),
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: filters.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          final item = filters[index];
+          final key = item['key'] as String;
+          final isSelected = currentFilter == key;
+          final label = isAr ? (item['label_ar'] as String) : (item['label'] as String);
+          final icon = item['icon'] as IconData;
+          final itemColor = item['color'] as Color?;
+
+          return InkWell(
+            onTap: () {
+              ref.read(feedProvider.notifier).setFilter(key);
+            },
+            borderRadius: BorderRadius.circular(24),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? primaryColor
+                    : (isDark ? const Color(0xFF1E293B) : Colors.white),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: isSelected
+                      ? primaryColor
+                      : (isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0)),
+                ),
+                boxShadow: isSelected
+                    ? [
+                        BoxShadow(
+                          color: primaryColor.withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    icon,
+                    size: 16,
+                    color: isSelected
+                        ? Colors.white
+                        : (itemColor ?? (isDark ? Colors.white70 : Colors.black54)),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                      color: isSelected
+                          ? Colors.white
+                          : (isDark ? Colors.white : const Color(0xFF1E293B)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }

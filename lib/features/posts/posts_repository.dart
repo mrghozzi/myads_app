@@ -86,5 +86,15 @@ class PostsRepository {
         ? response.data as Map<String, dynamic>
         : Map<String, dynamic>.from(response.data as Map);
   }
+
+  /// Vote on a community poll option
+  Future<Map<String, dynamic>> votePoll(int pollId, int optionId) async {
+    final response = await _dio.post('/polls/$pollId/vote', data: {
+      'poll_option_id': optionId,
+    });
+    return response.data is Map<String, dynamic>
+        ? response.data as Map<String, dynamic>
+        : Map<String, dynamic>.from(response.data as Map);
+  }
 }
 

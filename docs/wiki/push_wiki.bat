@@ -3,7 +3,7 @@ echo ===================================================
 echo Pushing MYADS Mobile App Wiki to GitHub...
 echo ===================================================
 cd /d "%~dp0"
-git push -u origin master
+git push -u origin main || git push -u origin master
 if %errorlevel% equ 0 (
     echo.
     echo ===================================================

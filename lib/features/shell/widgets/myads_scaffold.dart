@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../profile/profile_provider.dart';
+import '../../notifications/providers/notification_provider.dart';
 import '../../../core/widgets/hexagon_avatar.dart';
 
 class MyAdsScaffold extends ConsumerWidget {
@@ -32,9 +33,24 @@ class MyAdsScaffold extends ConsumerWidget {
             tooltip: 'Video Hub',
             onPressed: () => context.push('/video'),
           ),
-          IconButton(
-            icon: const Icon(Icons.notifications_none),
-            onPressed: () => context.push('/notifications'),
+          Consumer(
+            builder: (context, ref, _) {
+              final unreadCount = ref.watch(notificationProvider.select((s) => s.unreadCount));
+              return IconButton(
+                icon: unreadCount > 0
+                    ? Badge(
+                        label: Text(
+                          unreadCount > 99 ? '99+' : '$unreadCount',
+                          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                        ),
+                        backgroundColor: const Color(0xFF615DFA),
+                        child: const Icon(Icons.notifications_active_outlined),
+                      )
+                    : const Icon(Icons.notifications_none),
+                tooltip: 'الإشعارات',
+                onPressed: () => context.push('/notifications'),
+              );
+            },
           ),
           IconButton(
             icon: const Icon(Icons.mail_outline),

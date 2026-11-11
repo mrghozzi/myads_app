@@ -37,6 +37,7 @@ import '../../features/support/support_webview_screen.dart';
 import '../models/status_model.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+GlobalKey<NavigatorState> get rootNavigatorKey => _rootNavigatorKey;
 final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
 final appRouter = GoRouter(

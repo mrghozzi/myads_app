@@ -55,6 +55,16 @@ Future<void> main() async {
   
   // Load environment variables
   await dotenv.load(fileName: ".env");
+
+  // Initialize Firebase and Push Services
+  try {
+    await Firebase.initializeApp();
+    await PushNotificationService().init();
+  } catch (e) {
+    if (kDebugMode) {
+      debugPrint('Firebase initialization error: $e');
+    }
+  }
   
   runApp(
     const ProviderScope(
@@ -88,3 +98,27 @@ To guarantee zero connection drops, `ApiInterceptor` sends redundant fallback he
 * `X-API-KEY: <MOBILE_API_KEY>`
 
 On the Laravel backend, `CheckMobileApiKey` middleware inspects these headers automatically.
+
+---
+
+## 5. Firebase Cloud Messaging (FCM) Credentials
+
+Push notifications require configuration on both client and backend:
+
+### 5.1 Mobile Client Setup
+* **Android:** Download `google-services.json` from the Firebase Console and save it into:
+  `myads_app/android/app/google-services.json`
+* **iOS:** Download `GoogleService-Info.plist` from the Firebase Console and save it into:
+  `myads_app/ios/Runner/GoogleService-Info.plist`
+
+### 5.2 Backend `.env` Keys (Laravel)
+The backend `FcmPushService` supports modern OAuth2 Google Service Account credentials or legacy server keys:
+
+```env
+# Google Firebase HTTP v1 (OAuth2 Service Account JSON)
+FIREBASE_PROJECT_ID=myads-12345
+FIREBASE_CREDENTIALS=storage/app/firebase/service-account.json
+
+# Legacy Server Key Fallback (Optional)
+FCM_SERVER_KEY=AAAA...
+```

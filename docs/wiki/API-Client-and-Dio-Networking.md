@@ -93,11 +93,36 @@ This prevents silent login failure loops and provides developers with immediate 
 1. **Always use `try-catch` with `DioException`:**
    ```dart
    try {
-     final response = await ApiClient.instance.get('/feed');
-     return FeedResponse.fromJson(response.data);
+     final response = await ApiClient.instance.get('/notifications');
+     return response.data;
    } on DioException catch (e) {
      final message = e.response?.data['message'] ?? 'Network error occurred';
      throw Exception(message);
    }
    ```
-2. **Never hardcode Base URLs in feature code:** Always call relative endpoints (e.g. `/profile`, `/video/feed`).
+2. **Handle Cancellation Tokens for Disposed Views:** Use `CancelToken` when navigating away from high-bandwidth screens like video feeds to avoid memory leaks.
+3. **Use FormData for Media Uploads:** Multi-part file uploads (images, avatars, clips) should be passed via `FormData.fromMap({'media': await MultipartFile.fromFile(path)})`.
+
+---
+
+## 5. Core API Endpoints Catalog
+
+| Domain | Method | Endpoint | Description |
+| :--- | :--- | :--- | :--- |
+| **Auth** | `POST` | `/api/login` | Email/password login with Sanctum token issuance |
+| **Auth** | `POST` | `/api/logout` | Revokes current Sanctum API token |
+| **Feed** | `GET` | `/api/portal/feed` | Paginated community statuses with media embeds |
+| **Video Hub** | `GET` | `/api/video/feed` | Dedicated 16:9 main video grid and Shorts clips shelf |
+| **Clips** | `GET` | `/api/clips` | Vertical 9:16 short-form video reels |
+| **Notifications** | `GET` | `/api/notifications` | Paginated notifications (`?filter=all/mentions/reactions/comments`) |
+| **Notifications** | `GET` | `/api/notifications/unread-count` | Real-time total and categorized unread counters |
+| **Notifications** | `POST` | `/api/notifications/:id/read` | Mark single notification as read |
+| **Notifications** | `POST` | `/api/notifications/read-all` | Mark all notifications as read |
+| **Notifications** | `DELETE` | `/api/notifications/:id` | Delete notification item permanently |
+| **FCM Push** | `POST` | `/api/settings/device-token` | Register or update FCM registration token |
+| **Preferences** | `GET` | `/api/settings/notifications` | Fetch Push and Email notification preferences |
+| **Preferences** | `POST` | `/api/settings/notifications` | Update granular Push and Email preferences |
+| **Messages** | `GET` | `/api/messages` | Active conversations list |
+| **Messages** | `GET` | `/api/messages/:identifier` | 1-on-1 chat history with messages |
+| **Messages** | `POST` | `/api/messages/:identifier` | Send text or attachment message |
+| **Profile** | `GET` | `/api/profile/:username` | User profile, stats, badges, and VIP status |

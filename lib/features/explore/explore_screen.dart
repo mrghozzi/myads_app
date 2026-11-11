@@ -232,6 +232,13 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> with SingleTicker
               onTap: () => context.push('/forums'),
             ),
             _buildActionCard(
+              title: 'Groups',
+              subtitle: 'Communities & Circles',
+              icon: Icons.groups_rounded,
+              gradient: const LinearGradient(colors: [Color(0xFF615DFA), Color(0xFF23D2E2)]),
+              onTap: () => context.push('/groups'),
+            ),
+            _buildActionCard(
               title: 'Quests',
               subtitle: 'Earn Rewards',
               icon: Icons.military_tech_rounded,

@@ -1,6 +1,6 @@
 # MYADS Mobile App
 
-> **Version:** 1.8.8+30 | **Platform:** Android | **Framework:** Flutter 3.27+ / Dart 3.10+
+> **Version:** 1.8.9+31 | **Platform:** Android | **Framework:** Flutter 3.27+ / Dart 3.10+
 
 The official first-party mobile client for the [MYADS](https://github.com/mrghozzi/myads) social network, marketplace, and ad exchange platform. Built with Flutter and powered by the MYADS Laravel REST API (Sanctum).
 

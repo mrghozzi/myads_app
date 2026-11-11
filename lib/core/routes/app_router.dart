@@ -334,6 +334,23 @@ final appRouter = GoRouter(
         return SupportWebviewScreen(title: title, path: '/tickets');
       },
     ),
+    GoRoute(
+      path: '/groups',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final title = state.uri.queryParameters['title'] ?? 'Communities & Groups';
+        return SupportWebviewScreen(title: title, path: '/groups');
+      },
+    ),
+    GoRoute(
+      path: '/groups/:slug',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final slug = state.pathParameters['slug'] ?? '';
+        final title = state.uri.queryParameters['title'] ?? 'Group';
+        return SupportWebviewScreen(title: title, path: '/groups/$slug');
+      },
+    ),
   ],
 );
 

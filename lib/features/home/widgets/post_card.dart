@@ -848,6 +848,41 @@ class _PostCardState extends ConsumerState<PostCard> {
                         ),
                       ),
                     ],
+                    if (widget.status.group != null && widget.status.group!['name'] != null) ...[
+                      const SizedBox(width: 6),
+                      GestureDetector(
+                        onTap: () {
+                          final slug = widget.status.group!['slug']?.toString() ?? '';
+                          if (slug.isNotEmpty) {
+                            context.push('/groups/$slug');
+                          } else {
+                            context.push('/groups');
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF615DFA).withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.groups, size: 10, color: Color(0xFF615DFA)),
+                              const SizedBox(width: 3),
+                              Text(
+                                widget.status.group!['name'].toString(),
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF615DFA),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ],

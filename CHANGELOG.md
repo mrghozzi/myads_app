@@ -1,5 +1,23 @@
 # MYADS Mobile App — Changelog
 
+## v1.8.9+31
+> **Next-Gen Community Groups Integration & Mobile Parity Release** — Full synchronization with MYADS core v4.7.0 Next-Gen Groups System. Added dedicated deep-linking routes for `/groups` and `/groups/:slug` via `SupportWebviewScreen`, introduced a Community Groups discovery tile in `ExploreScreen`, added interactive group badge chips in `PostCard` headers linking directly to group hubs, and verified group selection in `ComposerScreen` for publishing posts directly into groups. Clean `flutter analyze` with 0 issues and 100% test pass on `flutter test`.
+
+### Community Groups & Feed Enhancements
+* **App Router & Webview Navigation (`app_router.dart`)**:
+  - Registered `/groups` and `/groups/:slug` routes using `SupportWebviewScreen` with authenticated bearer session injection and page header titles.
+* **Explore Screen Discovery Tile (`explore_screen.dart`)**:
+  - Added a dedicated "Groups" action card ("Communities & Circles") in the Explore discover grid with a vibrant gradient and `Icons.groups_rounded`.
+* **Group Attribution Badge in Post Cards (`post_card.dart`)**:
+  - Added an interactive group badge chip in `PostCard` header when `status.group` metadata is present, displaying the group name with an icon and navigating to `/groups/:slug`.
+* **Composer Group Targeting (`composer_screen.dart`, `posts_repository.dart`)**:
+  - Enhanced group options loading from `GET /api/composer/options` allowing active members to post directly into their joined or owned groups.
+* **Testing & Quality Assurance**:
+  - Clean `flutter analyze` (0 issues, 0 warnings).
+  - 100% test pass on `flutter test` (11 tests passed).
+
+---
+
 ## v1.8.8+30
 > **MYADS Core v4.7.0 Synchronization & Compatibility Release** — Full synchronization and verified compatibility with MYADS core v4.7.0. Verified mobile authentication and Sanctum session continuity under v4.7.0 zero-trust security and dual DocumentRoot architecture. Validated `SupportWebviewScreen` with AI Support Deflection engine and Cloudflare Turnstile human verification. Verified clean `flutter analyze` (0 issues) and 100% test pass on `flutter test`.
 

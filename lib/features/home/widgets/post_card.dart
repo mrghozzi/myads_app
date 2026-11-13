@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../core/models/status_model.dart';
+import '../../../core/models/user_profile_model.dart';
 import '../../../core/services/reaction_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'video_player_widget.dart';
@@ -604,6 +605,11 @@ class _PostCardState extends ConsumerState<PostCard> {
                               size: 14,
                             ),
                           ],
+                          if (original.user.subscriptionBadge != null &&
+                              original.user.subscriptionBadge!.label.isNotEmpty) ...[
+                            const SizedBox(width: 6),
+                            _buildSubscriptionBadgePill(original.user.subscriptionBadge!),
+                          ],
                         ],
                       ),
                       Text(
@@ -813,6 +819,11 @@ class _PostCardState extends ConsumerState<PostCard> {
                         size: 16,
                       ),
                     ],
+                    if (widget.status.user.subscriptionBadge != null &&
+                        widget.status.user.subscriptionBadge!.label.isNotEmpty) ...[
+                      const SizedBox(width: 6),
+                      _buildSubscriptionBadgePill(widget.status.user.subscriptionBadge!),
+                    ],
                   ],
                 ),
                 Row(
@@ -939,6 +950,34 @@ class _PostCardState extends ConsumerState<PostCard> {
           },
         ),
       ],
+    );
+  }
+
+  Widget _buildSubscriptionBadgePill(SubscriptionBadgeModel badge) {
+    Color badgeColor = const Color(0xFF615DFA);
+    try {
+      final clean = badge.color.replaceFirst('#', '').trim();
+      if (clean.length == 6) {
+        badgeColor = Color(int.parse('0xFF$clean'));
+      }
+    } catch (_) {}
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+      decoration: BoxDecoration(
+        color: badgeColor.withValues(alpha: 0.12),
+        border: Border.all(color: badgeColor.withValues(alpha: 0.35), width: 0.8),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        badge.label,
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+          color: badgeColor,
+          letterSpacing: 0.2,
+        ),
+      ),
     );
   }
 
